@@ -8,7 +8,7 @@
       >返回
       </q-btn>
       <q-btn outline
-             @click="()=>{$router.push('/')}"
+             @click="()=>{$router.push('/dashboard')}"
       >首页
       </q-btn>
     </div>

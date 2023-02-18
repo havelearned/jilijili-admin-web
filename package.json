@@ -6,6 +6,7 @@
   "author": "admin@ljj <1918652173@qq.com>",
   "private": true,
   "scripts": {
+    "quasar dev": "default",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {

@@ -23,11 +23,13 @@ export default route(function (/* { store, ssrContext } */) {
 // 每次跳转前都会到这里
   Router.beforeEach((to, from, next) => {
     const hasToken = getToken()
+
+    console.log("to=>",to,"\nfrom=>",from,"\n next=>",next);
+
     if (hasToken) {
       // 已经有了token不在访问login页面,返回首页
       if (to.path === '/login') {
         next({path: '/'})
-
         // 权限认证
       } else {
         next()

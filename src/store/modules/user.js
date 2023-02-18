@@ -1,18 +1,18 @@
-import {getToken, removeToken, setToken} from "src/utils/auth.js";
-import {login} from "../../api/user.js"
+import {getCurrentUser, getToken, removeCurrentUser, removeToken, setCurrentUser, setToken} from "src/utils/auth.js";
+import {create} from "src/api/token.js";
+import {Notify} from "quasar";
+import {me} from "src/api/user.js";
 
 // // 使用 store.state.user.xxx 调用
 const state = () => ({
-  nickname: 'music',
+  currentUser: getCurrentUser(),
   token: getToken(),
-  username: 'admin',
-  roles: 'root'
 })
 
 // 使用 store.getters['user/nicknameFastWord'] 调用
 const getters = {
   nicknameFastWord: state => {
-    return state.nickname.slice(1)
+    return state.currentUser ? state.currentUser.nickname.slice(1) : '登录'
 
   }
 };
@@ -20,20 +20,47 @@ const getters = {
 const actions = {
   login({commit}, {username, password}) {
     return new Promise((resolve, reject) => {
-      login(username.trim(), password).then(response => {
-        const authorization = response.headers['authorization'];
-        commit('SET_TOKEN', authorization);
-        setToken(authorization);
-        resolve();
-      }).catch(reason => {
-        reject(reason);
-      });
+      create(username, password).then(response => {
+        if (response.code !== 200) {
+          Notify.create({
+            type: 'negative',
+            message: response.message,
+            position: "top",
+          })
+          resolve()
+          return
+        }
+        const token = response.data;
+        commit('SET_TOKEN', token);
+        setToken(token);
+        resolve()
+      }).finally(() => {
+      })
     });
   },
   logout({commit, state, dispatch}) {
     commit('SET_TOKEN', ''); // 设置用户toke为空
-    commit('SET_ROLES', []); // 设置权限为空
+    commit('SET_ROLES', null); // 设置权限为空
     removeToken();//设置cookie里面的token为空
+
+    commit('SET_CURRENT_USER', '')
+    removeCurrentUser()
+
+
+  },
+  fetchCurrentUser({commit}) {
+    return new Promise((resolve, reject) => {
+      me()
+        .then(response => {
+
+            commit("SET_CURRENT_USER", response.data) //set Vuex
+            setCurrentUser(response.data) //  set CooKie
+            resolve(response.data) // return response.data
+
+        }).catch(error => {
+        reject(error)
+      })
+    })
   }
 };
 // 使用 store.commit调用
@@ -42,11 +69,8 @@ const mutations = {
     state.token = token
 
   },
-  SET_NICKNAME: (state, nickname) => {
-    state.token = nickname
-  },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles;
+  SET_CURRENT_USER: (state, currentUser) => {
+    state.currentUser = currentUser
   }
 };
 

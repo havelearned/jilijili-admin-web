@@ -39,8 +39,8 @@
 
 <script>
 
-import {useQuasar} from 'quasar'
-import {ref} from 'vue'
+import {QSpinnerFacebook, useQuasar} from 'quasar'
+import {onBeforeUnmount, ref} from 'vue'
 import {useStore} from "vuex";
 import {useRoute, useRouter} from "vue-router";
 
@@ -56,18 +56,50 @@ export default {
     const router = useRouter()
     const route = useRoute()
 
-    const onsubmit = (username, password) => {
-      store.dispatch("login", {username: username, password: password}).then(() => {
+    let timer
 
-        //查询redirect 参数
-        router.push({path: route.query.redirect || '/'})
+
+
+
+    const onsubmit = (username, password) => {
+      $q.loading.show({
+        spinner: QSpinnerFacebook,
+        spinnerColor: 'blue',
+        spinnerSize: 140,
+        backgroundColor: "gray",
+        message: '正在登录',
+        messageColor: 'black'
+      })
+
+      // 登录操作
+      store.dispatch("login", {username: username, password: password}).then(() => {
+        // 获取当前用户
+        store.dispatch('fetchCurrentUser').then(currentUser => {
+          // 是否有资格登录
+          let superAdmin = currentUser.roles.find(role => role.name === "ROLE_SUPER_ADMIN")
+          $q.loading.hide()
+          if (superAdmin) {
+            //查询redirect 参数
+            router.push({path: route.query.redirect || '/'})
+          } else {
+            store.dispatch("logout")
+            $q.notify({
+              position: "top",
+              message: "你的权限无法访问后台",
+              icon: 'announcement',
+              color: "negative"
+            })
+          }
+        })
       })
     }
     return {
       username,
       password,
       accept,
-      onsubmit
+      onsubmit,
+
+
     }
   }
 }
