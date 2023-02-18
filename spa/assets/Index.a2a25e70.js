@@ -1,1 +1,0 @@
-import{_ as e,j as n,k as o}from"./index.fc5ab6e9.js";const r={name:"operation"};function t(a,c,s,p,_,d){return n(),o("div",null," \u8FD9\u662F\u7528\u6237\u64CD\u4F5C\u9875\u9762 ")}var i=e(r,[["render",t]]);export{i as default};
