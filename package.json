@@ -1,0 +1,48 @@
+{
+  "name": "jilijili-music-admin",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "productName": "肌理音乐后台",
+  "author": "admin@ljj <1918652173@qq.com>",
+  "private": true,
+  "scripts": {
+    "quasar dev": "default",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "axios": "^0.21.1",
+    "js-cookie": "^3.0.1",
+    "quasar": "^2.6.0",
+    "vue": "^3.0.0",
+    "vue-i18n": "^9.0.0",
+    "vue-router": "^4.0.0",
+    "vuex": "^4.0.1"
+  },
+  "devDependencies": {
+    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
+    "@quasar/app-vite": "^1.0.0",
+    "@vue/devtools": "^6.5.0",
+    "autoprefixer": "^10.4.2",
+    "electron": "^23.1.0",
+    "electron-packager": "^15.2.0",
+    "less": "^4.1.3",
+    "less-loader": "^11.1.0",
+    "postcss": "^8.4.14",
+    "push-dir": "^0.4.1",
+    "workbox-build": "^6.5.0",
+    "workbox-cacheable-response": "^6.5.0",
+    "workbox-core": "^6.5.0",
+    "workbox-expiration": "^6.5.0",
+    "workbox-precaching": "^6.5.0",
+    "workbox-routing": "^6.5.0",
+    "workbox-strategies": "^6.5.0"
+  },
+  "engines": {
+    "node": "^18 || ^16 || ^14.19",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "main": "index.js",
+  "license": "MIT"
+}
