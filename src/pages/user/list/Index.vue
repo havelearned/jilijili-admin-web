@@ -48,14 +48,17 @@
           :loading="loading"
           loading-label="加载"
           hide-pagination
+          binary-state-sort
           v-model:pagination="pagination"
           v-model:selected="selected"
+          @row-click="rowClick"
         >
 
 
           <template v-slot:top>
-            <q-btn color="primary" :disable="loading" label="添加" @click="add"/>
-            <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="删除" @click="remove"/>
+            <q-btn color="primary" :disable="loading" label="添加" @click="toggleDialog"/>
+            <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="删除"/>
+
             <q-space/>
             <q-input borderless dense debounce="300" color="primary" v-model="filter">
               <template v-slot:append>
@@ -63,6 +66,24 @@
               </template>
             </q-input>
           </template>
+
+
+<!--          <template v-slot:body="props">-->
+
+<!--            <q-tr :props="props">-->
+<!--              <q-td key="id" :props="props">{{ props.row.id }}</q-td>-->
+
+<!--              <q-td key="username" :props="props">{{ props.row.username }}</q-td>-->
+<!--              <q-td key="nickname" :props="props">{{ props.row.nickname }}</q-td>-->
+<!--              <q-td key="gender" :props="props">{{ props.row.gender }}</q-td>-->
+<!--              <q-td key="unseal" :props="props">{{ props.row.unseal }}</q-td>-->
+<!--              <q-td key="lastLoginIp" :props="props">{{ props.row.lastLoginIp }}</q-td>-->
+<!--              <q-td key="lastLoginTime" :props="props">{{ props.row.lastLoginTime }}</q-td>-->
+<!--              <q-td key="createdTime" :props="props">{{ props.row.createdTime }}</q-td>-->
+<!--            </q-tr>-->
+
+
+<!--          </template>-->
 
 
         </q-table>
@@ -87,167 +108,107 @@
     </div>
   </div>
 
+  <create-dialog v-if="showDialog" @hide="toggleDialog"/>
+
+
 </template>
 
-<script>
-import {computed, ref} from "vue";
-import {search} from "src/api/user.js";
+<script setup>
+import {useUserSearch} from "src/composables/useUserSearch.js";
+import {ref} from "vue";
+import {useToggleDialog} from "src/composables/useToggleDialog.js";
+import CreateDialog from "pages/user/list/CreateDialog.vue";
+
+const showDialog = ref(false);
+const {
+  selected,
+  loading, // 加载状态
+  scrollTargetRef, // 不知道
+  tableData, // 表单数据
+  filter, // 搜索筛选数据
+  pagination,
+  pageNumber,
+  fetchData,
+  searchFrom,
+  rowClick
+} = useUserSearch()
+const {toggleDialog} = useToggleDialog(showDialog)
 
 
-export default {
-  name: "",
-  setup() {
-    let scrollTargetRef = ""
-    let tableData = ref([])
-    let filter = ref('')
-    let loading = ref(true)
-    let selected = ref([])// 选择内容
-    /*列和行*/
-    const columns = [
-      {
-        name: "id",
-        required: true,
-        label: "id",
-        align: 'center',
-        field: row => row.id,
-        format: val => `${val}`,
-        sortable: true
-      },
-      {
-        name: "username",
-        required: true,
-        label: "用户名",
-        align: 'center',
-        field: row => row.username,
-        format: val => `${val}`,
-        sortable: true
-      },
-      {
-        name: "nickname",
-        required: true,
-        label: "昵称",
-        align: 'center',
-        field: row => row.nickname,
-        format: val => `${val}`,
-        sortable: true
-      },
-      {
-        name: "gender",
-        required: true,
-        label: "性别",
-        align: 'center',
-        field: row => row.gender,
-        format: val => `${val}`,
-        sortable: true
-      },
-      {
-        name: "unseal",
-        required: true,
-        label: "是否可用",
-        align: 'center',
-        field: row => row.unseal,
-        format: val => `${val === 1 ? "可用" : "禁用"}`,
-        sortable: true
-      },
-      {
-        name: "lastLoginIp",
-        required: true,
-        label: "IP地址",
-        align: 'center',
-        field: row => row.lastLoginIp,
-        format: val => `${val}`,
-        sortable: true
-      },
-      {
-        name: "lastLoginTime",
-        required: true,
-        label: "最后登录时间",
-        align: 'center',
-        field: row => row.lastLoginTime,
-        format: val => `${val}`,
-        sortable: true
-      },
-      {
-        name: "createdTime",
-        required: true,
-        label: "创建时间",
-        align: 'center',
-        field: row => row.createdTime,
-        format: val => `${val}`,
-        sortable: true
-      }];
-    let searchFrom = {
-      page: 0,
-      size: 10,
-      id: undefined,
-      createdTime: undefined,
-      specifyTime: undefined,
-      nickname: undefined,
-      username: undefined,
-      unseal: undefined,
-      gender: undefined
-    }
-
-    /*分页*/
-    let pagination = ref({
-      current: 0,
-      sortBy: 'desc',
-      descending: false,
-      page: 0, // 当前页,选中的页面
-      rowsPerPage: 10, // 每页行数
-      rowsNumber: 0, // 总行数(总记录数)
-      // rowsNumber: xx if getting data from a server
-    })
-
-    const fetchData = (current) => {
-      loading.value = true
-      searchFrom.page = current
-      search(searchFrom).then(res => {
-        // console.log("res=>",res)
-        tableData.value = res.data.records
-        pagination.value.rowsPerPage = res.data.size
-        pagination.value.rowsNumber = res.data.total
-        pagination.value.current = res.data.current
-
-      }).finally(() => {
-        loading.value = false
-      })
-    }
-    fetchData()
-    const add = () => {
-      console.log(selected);
-    }
-    const remove = () => {
-    }
-
-    return {
-      selected,
-      loading, // 加载状态
-      scrollTargetRef, // 不知道
-      columns,
-      tableData,
-      filter,
-      pagination,
-      pageNumber: computed(() => {
-        return (pagination.value.rowsNumber / pagination.value.rowsPerPage) + 1
-      }),
-      fetchData,
-      searchFrom,
-
-      add,
-      remove
-
-
-      // onLoadRef,
-    }
+/*列和行*/
+const columns = [
+  {
+    name: "id",
+    required: true,
+    label: "id",
+    align: 'center',
+    field: row => row.id,
+    format: val => `${val}`,
+    sortable: true
   },
-  created() {
-
+  {
+    name: "username",
+    required: true,
+    label: "用户名",
+    align: 'center',
+    field: row => row.username,
+    format: val => `${val}`,
+    sortable: true
   },
-
-
-}
-
+  {
+    name: "nickname",
+    required: true,
+    label: "昵称",
+    align: 'center',
+    field: row => row.nickname,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: "gender",
+    required: true,
+    label: "性别",
+    align: 'center',
+    field: row => row.gender,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: "unseal",
+    required: true,
+    label: "是否可用",
+    align: 'center',
+    field: row => row.unseal,
+    format: val => `${val === 1 ? "可用" : "禁用"}`,
+    sortable: true
+  },
+  {
+    name: "lastLoginIp",
+    required: true,
+    label: "IP地址",
+    align: 'center',
+    field: row => row.lastLoginIp,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: "lastLoginTime",
+    required: true,
+    label: "最后登录时间",
+    align: 'center',
+    field: row => row.lastLoginTime,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: "createdTime",
+    required: true,
+    label: "创建时间",
+    align: 'center',
+    field: row => row.createdTime,
+    format: val => `${val}`,
+    sortable: true
+  }];
 </script>
 
 <style scoped lang="less">

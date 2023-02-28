@@ -52,7 +52,7 @@ module.exports = configure(function ( ctx ) {
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
-      vueDevtools: true,
+      vueDevtools: false,
       // vueOptionsAPI: false,
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
@@ -84,7 +84,7 @@ module.exports = configure(function ( ctx ) {
     devServer: {
       https: false,
       open: false, // opens browser window automatically
-      disableHostCheck:true
+      disableHostCheck:true,
 
 
     },

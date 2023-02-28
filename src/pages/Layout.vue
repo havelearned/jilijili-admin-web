@@ -5,7 +5,7 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
         <q-toolbar-title>
-          肌理音乐
+          肌理音乐后台
         </q-toolbar-title>
         <q-avatar color="teal" text-color="white">
           {{ nicknameFastWord }}

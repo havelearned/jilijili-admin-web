@@ -24,7 +24,7 @@ const menuRoutes = [
           {
             path: 'operation',
             name: "operation",
-            meta: {title: "用户列表", icon: "", path: "/operation"},
+            meta: {title: "授权用户", icon: "", path: "/operation"},
             component: () => import('pages/user/operation/Index.vue')
           }
         ]

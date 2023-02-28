@@ -1,18 +1,20 @@
 import {boot} from 'quasar/wrappers'
 import axios from 'axios'
 import store from '../store';
-import {Notify, Loading} from 'quasar'
+import {Loading, Notify} from 'quasar'
 import {whiteList} from "src/permission.js";
 
-const baseURL = import.meta.env.VITE_BASEURL_TENXUN
+// const baseURL = import.meta.env.VITE_BASEURL_TENXUN
 // const baseURL = import.meta.env.VITE_BASEURL_DEV
-// const baseURL = import.meta.env.VITE_BASEURL
+const baseURL = import.meta.env.VITE_BASEURL
 // console.log('import', import.meta)
 // console.log('import.url', import.meta.env.BASE_URL)
 // console.log('import.env.MODE', import.meta.env.MODE)
 // console.log('import.meta.env.VITE_BASEURL', import.meta.env.VITE_BASEURL)
 
-const api = axios.create({baseURL: baseURL})
+const api = axios.create({
+  baseURL: baseURL,
+})
 const tokenPrefix = "Bearer ";
 
 // 请求拦截器
@@ -20,6 +22,8 @@ api.interceptors.request.use(config => {
   if (store.state.user.token) {
     config.headers['Authorization'] = tokenPrefix + store.state.user.token;
   }
+  config.headers["Content-Type"] = "application/json"
+  config.headers['Access-Control-Allow-Origin'] = '*'
   return config
 }, error => {
   return Promise.reject(error)
@@ -28,6 +32,7 @@ api.interceptors.request.use(config => {
 
 // 响应拦截器
 api.interceptors.response.use(response => {
+  console.log("api.interceptors.response.success=>", response)
   // 包含有白名单
   if (whiteList.indexOf(response.config.url) !== -1) {
     return response
@@ -40,9 +45,10 @@ api.interceptors.response.use(response => {
 
 })
 
-const handleErrorResponse = (response) =>{
+const handleErrorResponse = (response) => {
   Loading.hide()
-  switch (response.status){
+  console.log("api.interceptors.response.error=>", response)
+  switch (response.data.code) {
     case 401:
       store.dispatch('logout')
       break;

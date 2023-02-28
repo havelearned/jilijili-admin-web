@@ -18,7 +18,7 @@ export const add = (data) => {
   return api.post("/users/", data)
 }
 export const update = (id, data) => {
-  return api.put(`/users/${id}`, data)
+  return api.put(`/users/${id}`, {data})
 }
 
 export const deleted = (id) => {
