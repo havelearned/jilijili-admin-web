@@ -11,7 +11,7 @@ export const useUserSearch = () => {
   // 搜索表单
   let searchFrom = {
     page: 0,
-    size: 10,
+    size: 5,
     id: undefined,
     createdTime: undefined,
     specifyTime: undefined,
@@ -26,7 +26,7 @@ export const useUserSearch = () => {
     sortBy: 'desc',
     descending: false,
     page: 0, // 当前页,选中的页面
-    rowsPerPage: 10, // 每页行数
+    rowsPerPage: 0, // 每页行数
     rowsNumber: 0, // 总行数(总记录数)
     // rowsNumber: xx if getting data from a server
   })

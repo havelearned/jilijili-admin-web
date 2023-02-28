@@ -1,8 +1,7 @@
 <template>
   <div class="login-page">
-
     <q-card class="my-card   login-form-content">
-      <div class="title">jilijiliMusic</div>
+      <div class="title">肌理音乐后台</div>
       <q-form
         class="q-gutter-md form"
         @submit="onsubmit(username,password)"
@@ -12,7 +11,7 @@
           filled
           v-model="username"
           label="账号"
-          hint="input access"
+          hint="Account | Mobile number"
           lazy-rules
           :rules="[ val => val && val.length > 0 || '账号不正确']"
         />
@@ -113,6 +112,10 @@ export default {
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  background-image: url("../assets/images/JilijiliBG.png");
+  position:fixed;
+  background-size:100% 100%;
+
 
 
   .login-form-content {

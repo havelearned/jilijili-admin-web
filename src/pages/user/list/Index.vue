@@ -66,44 +66,48 @@
               </template>
             </q-input>
           </template>
+          <!--                    <template v-slot:body="props">
+
+                                <q-tr :props="props">
+                                  <q-td key="id" :props="props">{{ props.row.id }}</q-td>
+
+                                  <q-td key="username" :props="props">{{ props.row.username }}</q-td>
+                                  <q-td key="nickname" :props="props">{{ props.row.nickname }}</q-td>
+                                  <q-td key="gender" :props="props">{{ props.row.gender }}</q-td>
+                                  <q-td key="unseal" :props="props">{{ props.row.unseal }}</q-td>
+                                  <q-td key="lastLoginIp" :props="props">{{ props.row.lastLoginIp }}</q-td>
+                                  <q-td key="lastLoginTime" :props="props">{{ props.row.lastLoginTime }}</q-td>
+                                  <q-td key="createdTime" :props="props">{{ props.row.createdTime }}</q-td>
+                                </q-tr>
 
 
-<!--          <template v-slot:body="props">-->
-
-<!--            <q-tr :props="props">-->
-<!--              <q-td key="id" :props="props">{{ props.row.id }}</q-td>-->
-
-<!--              <q-td key="username" :props="props">{{ props.row.username }}</q-td>-->
-<!--              <q-td key="nickname" :props="props">{{ props.row.nickname }}</q-td>-->
-<!--              <q-td key="gender" :props="props">{{ props.row.gender }}</q-td>-->
-<!--              <q-td key="unseal" :props="props">{{ props.row.unseal }}</q-td>-->
-<!--              <q-td key="lastLoginIp" :props="props">{{ props.row.lastLoginIp }}</q-td>-->
-<!--              <q-td key="lastLoginTime" :props="props">{{ props.row.lastLoginTime }}</q-td>-->
-<!--              <q-td key="createdTime" :props="props">{{ props.row.createdTime }}</q-td>-->
-<!--            </q-tr>-->
-
-
-<!--          </template>-->
+                              </template>-->
 
 
         </q-table>
-        <div class=" row justify-center q-mt-md">
-          <q-pagination
-            @update:modelValue="fetchData"
-            v-model="pagination.current"
-            row-key="username"
-            color="black"
-            :max="pageNumber"
-            :max-pages="pagination.rowsPerPage"
-            :boundary-numbers="false"
-            boundary-links
-          />
-          <div>当前页:</div>
-          <div>总页数:</div>
-          <div>跳转</div>
-        </div>
-      </div>
 
+      </div>
+      <div class="page-bar row justify-center q-mt-md ">
+        <q-pagination
+          direction-links
+          unelevated
+          color="black"
+          active-color="purple"
+          @update:modelValue="fetchData"
+          v-model="pagination.current"
+          row-key="username"
+          :max="pageNumber"
+          :max-pages="pagination.rowsPerPage"
+          :boundary-numbers="false"
+          boundary-links
+        />
+        <div class="row justify-center">
+          <span>一共:10000条记录</span>
+          <q-select filled v-model="skip" :options="[10,20,30,40]" label="Filled"/>
+          <q-btn label="跳转"></q-btn>
+        </div>
+
+      </div>
 
     </div>
   </div>
@@ -134,6 +138,7 @@ const {
 } = useUserSearch()
 const {toggleDialog} = useToggleDialog(showDialog)
 
+const skip = ref(1)
 
 /*列和行*/
 const columns = [
