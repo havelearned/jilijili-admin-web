@@ -1,4 +1,4 @@
-import {api} from "../boot/axios.js"
+import {api} from "boot/axios"
 
 export const login = (username, password) => {
   return api.post("/login", {username, password});
@@ -17,8 +17,8 @@ export const me = () => {
 export const add = (data) => {
   return api.post("/users/", data)
 }
-export const update = (id, data) => {
-  return api.put(`/users/${id}`, {data})
+export const update = ( data) => {
+  return api.put(`/users/`, data)
 }
 
 export const deleted = (id) => {

@@ -4,7 +4,7 @@ const state = () => ({
       {
         title: "用户管理", icon: "manage_accounts", path: null, children: [
           {title: "用户列表", icon: "person", path: "/user/list", children: null},
-          {title: "用户操作", icon: "people", path: "/user/operation", children: null},
+          {title: "权限管理", icon: "people", path: "/user/operation", children: null},
         ]
       },
     ]

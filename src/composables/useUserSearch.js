@@ -7,7 +7,6 @@ export const useUserSearch = () => {
   let filter = ref('')
   let loading = ref(true)
   let selected = ref([])// 选择内容
-
   // 搜索表单
   let searchFrom = {
     page: 0,
@@ -55,12 +54,8 @@ export const useUserSearch = () => {
   // 钩子函数,初始化数据
   onMounted(fetchData)
 
-  const rowClick = (numberOfRows) => {
-    console.log("numberOfRows=>", numberOfRows);
-  }
 
   return {
-    rowClick,
     selected,
     loading, // 加载状态
     scrollTargetRef, // 不知道
@@ -69,6 +64,7 @@ export const useUserSearch = () => {
     pagination,
     pageNumber,
     fetchData,
+
     searchFrom,
 
   }

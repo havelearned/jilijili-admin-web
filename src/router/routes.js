@@ -20,11 +20,11 @@ const menuRoutes = [
           name: "list",
           meta: {title: "用户列表", icon: "", path: "/list"},
           component: () => import('pages/user/list/Index.vue')
-          },
+        },
           {
             path: 'operation',
-            name: "operation",
-            meta: {title: "授权用户", icon: "", path: "/operation"},
+            name: "权限管理",
+            meta: {title: "权限管理", icon: "", path: "/operation"},
             component: () => import('pages/user/operation/Index.vue')
           }
         ]

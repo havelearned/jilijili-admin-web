@@ -12,6 +12,7 @@ node_modules
 /src-cordova/plugins
 /src-cordova/www
 
+.env
 # Capacitor related directories and files
 /src-capacitor/www
 /src-capacitor/node_modules

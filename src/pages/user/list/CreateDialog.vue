@@ -66,6 +66,7 @@
 import {ref} from "vue";
 import {add} from 'src/api/user.js'
 import {useQuasar} from "quasar";
+import {useNotify} from "src/composables/useNotify";
 
 const $q = useQuasar()
 
@@ -76,19 +77,19 @@ const userInfo = ref({
   username: "",
   password: "",
 })
+const {negativeNotify,positiveNotify} = useNotify()
 
 const onSubmit = () => {
   bar.value.start()
 
   // 添加用户
-  add(JSON.stringify(userInfo.value)).then(res => {
+  add(JSON.stringify(userInfo.value)).then(response => {
 
-    if (res.code === 200) {
-      $q.notify({
-        type: 'positive',
-        message: res.message
-      })
-      fixed.value= false
+    if(response.code === 200){
+      positiveNotify(response.message)
+      fixed.value=false
+    }else{
+      negativeNotify(response.message)
     }
 
   }).finally(()=>{
