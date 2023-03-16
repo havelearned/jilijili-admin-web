@@ -26,7 +26,8 @@ export default route(function (/* { store, ssrContext } */) {
 
     console.log("to=>",to,"\nfrom=>",from,"\n next=>",next);
 
-    if (hasToken) {
+    // if (hasToken) {
+      if (true) {
       // 已经有了token不在访问login页面,返回首页
       if (to.path === '/login') {
         next({path: '/'})
