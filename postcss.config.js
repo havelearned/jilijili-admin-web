@@ -2,6 +2,10 @@
 // https://github.com/michael-ciniawsky/postcss-load-config
 
 module.exports = {
+  transpileDependencies: [
+    'vue-echarts',
+    'resize-detector'
+  ],
   plugins: [
     // https://github.com/postcss/autoprefixer
     require('autoprefixer')({

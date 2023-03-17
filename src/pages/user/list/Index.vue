@@ -38,7 +38,6 @@
           v-model:pagination="pagination"
         >
 
-
           <template v-slot:top="props">
             <q-btn color="primary" :disable="loading" label="添加" @click="createToggleDialog.toggleDialog()"/>
             <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="删除"/>
@@ -49,38 +48,15 @@
             </q-btn>
 
             <q-space/>
-
-            <!--              @submit="onSubmit"-->
-            <!--              @reset="onReset"-->
             <q-form
-
-              class="q-gutter"
-            >
+              @submit="fetchData" @reset="onReset" class="q-gutter">
               <q-item class="row-lg q-gutter-md">
-                <q-input
-                  filled
-                  label="id"
-                  lazy-rules
-                />
-                <q-input
-                  filled
-                  label="用户名称"
-                  lazy-rules
-                />
-                <q-input
-                  filled
-                  label="昵称"
-                  lazy-rules
-                />
-<!--                <q-select standout-->
-<!--                          label="性别"-->
-
-<!--                          :options="['MAIN','FEMALE']"-->
-<!--                          :dense="false"-->
-<!--                          :options-dense="true"/>-->
-
-       <q-input filled type="date" hint="开始时间"/>
-       <q-input filled type="date" hint="结束时间"/>
+                <q-input filled label="id" lazy-rules v-model="searchFrom.id"/>
+                <q-input filled label="用户名称" lazy-rules v-model="searchFrom.username" />
+                <q-input filled label="昵称" lazy-rules v-model="searchFrom.nickname"/>
+                <q-select filled v-model="searchFrom.gender" :options="options" label="性别" />
+                <q-input filled type="date" hint="开始时间" v-model="searchFrom.createdTime"/>
+                <q-input filled type="date" hint="结束时间" v-model="searchFrom.specifyTime"/>
 
 
                 <div class="q-mt-md content-center">
@@ -125,7 +101,6 @@
 
     </div>
   </div>
-
   <create-dialog v-if="showDialog" @hide="createToggleDialog.toggleDialog()"/>
   <update-dialog v-if="updateDialogFlag" @hide="updateToggleDialog.toggleDialog()" :currentRow="currentRow"/>
 </template>
@@ -136,6 +111,7 @@ import {ref} from "vue";
 import {useToggleDialog} from "src/composables/useToggleDialog.js";
 import CreateDialog from "pages/user/list/CreateDialog.vue";
 import UpdateDialog from "pages/user/list/UpdateDialog.vue";
+import {DatetimeFormat} from "vue-i18n";
 
 const updateDialogFlag = ref(false)
 const showDialog = ref(false);
@@ -149,6 +125,8 @@ const {
   pageNumber,
   fetchData,
   searchFrom,
+  options,
+  onReset
 } = useUserSearch()
 const createToggleDialog = useToggleDialog(showDialog)
 const updateToggleDialog = useToggleDialog(updateDialogFlag)

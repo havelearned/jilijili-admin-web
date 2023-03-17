@@ -1,5 +1,6 @@
 import {computed, onMounted, ref} from "vue";
 import {search} from "src/api/user.js";
+import {useNotify} from "src/composables/useNotify";
 
 export const useUserSearch = () => {
   let scrollTargetRef = ""
@@ -7,20 +8,21 @@ export const useUserSearch = () => {
   let filter = ref('')
   let loading = ref(true)
   let selected = ref([])// 选择内容
+  let options=ref(["FEMALE","MALE","UNKNOWN","ALL"])
   // 搜索表单
-  let searchFrom = {
+  const searchFrom = ref({
     page: 0,
     size: 5,
-    id: undefined,
-    createdTime: undefined,
-    specifyTime: undefined,
-    nickname: undefined,
-    username: undefined,
-    unseal: undefined,
-    gender: undefined
-  }
+    id: '',
+    createdTime: '',
+    specifyTime: '',
+    nickname: '',
+    username: '',
+    unseal: 1,
+    gender: 'MALE'
+  })
   // 分页信息
-  let pagination = ref({
+  const pagination = ref({
     current: 0,
     sortBy: 'desc',
     descending: false,
@@ -33,17 +35,32 @@ export const useUserSearch = () => {
   // 获取数据
   const fetchData = (current) => {
     loading.value = true
-    searchFrom.page = current
-    search(searchFrom).then(res => {
-      // console.log("res=>",res)
-      tableData.value = res.data.records
-      pagination.value.rowsPerPage = res.data.size
-      pagination.value.rowsNumber = res.data.total
-      pagination.value.current = res.data.current
+    searchFrom.value.page = current
+    search(searchFrom.value).then(res => {
+      if(res.code===200){
+        tableData.value = res.data.records
+        pagination.value.rowsPerPage = res.data.size
+        pagination.value.rowsNumber = res.data.total
+        pagination.value.current = res.data.current
+      }else{
+        useNotify().negativeNotify(res.message)
+      }
 
     }).finally(() => {
       loading.value = false
     })
+  }
+  const onReset=()=>{
+
+    searchFrom.value.id ='';
+    searchFrom.value.username ='';
+    searchFrom.value.gender ='ALL';
+    searchFrom.value.createdTime ='';
+    searchFrom.value.specifyTime ='';
+    searchFrom.value.unseal =1;
+    searchFrom.value.specifyTime ='';
+
+
   }
 
   // 计算分页
@@ -64,8 +81,8 @@ export const useUserSearch = () => {
     pagination,
     pageNumber,
     fetchData,
-
+    options,
+    onReset,
     searchFrom,
-
   }
 }

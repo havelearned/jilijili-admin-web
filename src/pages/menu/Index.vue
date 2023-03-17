@@ -1,49 +1,66 @@
 <template>
   <div class="page">
     <q-list bordered class="rounded-borders">
-      <q-expansion-item v-for="(menu,index) in menus" :key="index" :to="menu.path">
+      <q-expansion-item
+        group="semigroup"
+        v-for="(menu,index) in menus" :key="index" :to="menu.meta.path">
         <template v-slot:header>
           <q-item-section avatar>
-            <q-icon :name="menu.icon"></q-icon>
+            <q-icon :name="menu.meta.icon"></q-icon>
           </q-item-section>
           <q-item-section>
-            {{ menu.title }}
+            {{ menu.meta.title }}
           </q-item-section>
         </template>
         <q-separator/>
 
         <q-expansion-item
+          group="semigroup-children"
           v-if="menu.children"
           v-for="(item,index) in menu.children"
           :key="index"
-          :to="item.path"
+          :to="item.meta.path"
           :header-inset-level="1"
           expand-separator
         >
           <template v-slot:header>
             <q-item-section avatar>
-              <q-icon :name="item.icon"></q-icon>
+              <q-icon :name="item.meta.icon"></q-icon>
             </q-item-section>
             <q-item-section>
-              {{ item.title }}
+              {{ item.meta.title }}
             </q-item-section>
           </template>
         </q-expansion-item>
+
+
+          <q-card v-else>
+            <q-card-section>
+              {{menu.meta.title}}
+            </q-card-section>
+          </q-card>
+        <q-separator/>
       </q-expansion-item>
-      <q-separator/>
+
     </q-list>
 
   </div>
 </template>
 
 <script>
-import {useStore} from "vuex";
+import {useRouter} from "vue-router";
+
 
 export default {
-  // name: 'menu',
+
   setup() {
-    const store = useStore()
-    const menus = store.getters['getMenuRoutes']
+    let router = useRouter()
+
+    const route = router.options.routes;
+
+    const menus = route.at(0).children
+
+
     return {
       menus,
     }

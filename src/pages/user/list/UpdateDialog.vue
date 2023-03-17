@@ -88,6 +88,7 @@ import {useQuasar} from "quasar";
 import {update,deleted} from "src/api/user";
 import {useNotify} from "src/composables/useNotify";
 import {useDialog} from "src/composables/useDialog";
+
 const $q = useQuasar()
 const fixed = ref(true)
 const bar = ref(null)
@@ -119,8 +120,6 @@ const onSubmit = () => {
     }else{
       negativeNotify(response.message)
     }
-
-
   }).finally(()=>{
     bar.value.stop()
   })
@@ -134,6 +133,8 @@ const confirmDeleted = (id) =>{
         if(response.code === 200){
           positiveNotify(response.message)
           fixed.value=false
+          const emit = defineEmits(['refresh'])
+          emit('fetchData',0)
         }else{
           negativeNotify(response.message)
         }
@@ -147,11 +148,10 @@ const confirmDeleted = (id) =>{
     }
 
   })
-  console.log("id=>",id)
+
 }
 
 const onReset = () => {
-  console.log("onRest")
 }
 
 </script>

@@ -24,10 +24,10 @@ export default route(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     const hasToken = getToken()
 
-    console.log("to=>",to,"\nfrom=>",from,"\n next=>",next);
+    // console.log("to=>",to,"\nfrom=>",from,"\n next=>",next);
 
-    // if (hasToken) {
-    if (true) {
+    if (hasToken) {
+    // if (true) {
 
       // 已经有了token不在访问login页面,返回首页
       if (to.path === '/login') {

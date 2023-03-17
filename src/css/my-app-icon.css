@@ -1,0 +1,11 @@
+.my-app-icon {
+  font-family: 'My App Icon';
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'My App Icon';
+  font-style: normal; /* 您需要什么 */
+  font-weight: 400;   /* 字体.... */
+  src: url("./HarmonyOS_Sans_TC_Bold.ttf") format("woff2"), url("./HarmonyOS_Sans_TC_Bold.ttf") format("woff");
+}
