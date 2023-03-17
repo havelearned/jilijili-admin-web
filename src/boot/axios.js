@@ -32,7 +32,6 @@ api.interceptors.request.use(config => {
 
 // 响应拦截器
 api.interceptors.response.use(response => {
-  console.log("api.interceptors.response.success=>", response)
   // 包含有白名单
   if (whiteList.indexOf(response.config.url) !== -1) {
     return response
@@ -42,7 +41,6 @@ api.interceptors.response.use(response => {
   Loading.hide()
   // 得到错误的相应信息
   let response = error.response
-  console.log("api.interceptors.response.error=>", error.response,", response=>",Boolean(response))
   if (response) {
     // 根据返回的状态码,做相应的逻辑处理
     switch (response.data.code) {
