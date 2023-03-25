@@ -12,6 +12,7 @@ const myIcons = {
   'jilijili:system': 'img:/src/assets/images/system.svg',
   'jilijili:userList': 'img:/src/assets/images/userList.svg',
   'jilijili:userPower': 'img:/src/assets/images/userPower.svg',
+  'jilijili:exclamation': 'img:/src/assets/images/exclamation.svg', // 感叹号
 
 }
 import { defineComponent } from 'vue'

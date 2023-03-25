@@ -3,22 +3,22 @@
   <div class="page">
     <div class="content rounded-borders">
       <q-markup-table flat bordered>
-      <thead class="bg-teal">
-      <tr>
-        <th colspan="5">
-          <div class="row no-wrap items-center">
-            <q-img
-              style="width: 70px"
-              :ratio="1"
-              class="rounded-borders"
-              src="https://cdn.quasar.dev/img/donuts.png"
-            />
+        <thead class="bg-teal">
+        <tr>
+          <th colspan="5">
+            <div class="row no-wrap items-center">
+              <q-img
+                style="width: 70px"
+                :ratio="1"
+                class="rounded-borders"
+                src="https://cdn.quasar.dev/img/donuts.png"
+              />
 
-            <div class="text-h4 q-ml-md text-white">Treats</div>
-          </div>
-        </th>
-      </tr>
-      </thead>
+              <div class="text-h4 q-ml-md text-white">Treats</div>
+            </div>
+          </th>
+        </tr>
+        </thead>
       </q-markup-table>
 
       <!--   表格内容   -->
@@ -40,7 +40,7 @@
 
           <template v-slot:top="props">
             <q-btn color="primary" :disable="loading" label="添加" @click="createToggleDialog.toggleDialog()"/>
-            <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="删除"/>
+            <q-btn class="q-ml-sm" color="deep-orange" :disable="loading" label="删除" @click="delUsers"/>
             <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="修改">
               <q-tooltip anchor="top middle" self="top start">
                 双击条目即可修改
@@ -49,19 +49,28 @@
 
             <q-space/>
             <q-form
-              @submit="fetchData" @reset="onReset" class="q-gutter">
+              @submit="fetchData(pagination.page)" @reset="onReset" class="q-gutter">
               <q-item class="row-lg q-gutter-md">
+
+
+                <q-icon name="jilijili:exclamation" style="width: 32px;height: 32px;" >
+                  <q-tooltip anchor="top middle" self="center middle">
+                    用户名称,昵称搜索,自动删除前后空格
+                  </q-tooltip>
+                </q-icon>
                 <q-input filled label="id" lazy-rules v-model="searchFrom.id"/>
-                <q-input filled label="用户名称" lazy-rules v-model="searchFrom.username" />
+                <q-input filled label="用户名称" lazy-rules v-model="searchFrom.username"/>
+
                 <q-input filled label="昵称" lazy-rules v-model="searchFrom.nickname"/>
-                <q-select filled v-model="searchFrom.gender" :options="options" label="性别" />
-                <q-input filled type="date" hint="开始时间" v-model="searchFrom.createdTime"/>
-                <q-input filled type="date" hint="结束时间" v-model="searchFrom.specifyTime"/>
+                <q-select filled v-model="searchFrom.gender" :options="options" label="性别"/>
+                <!--                <q-input filled type="date" hint="开始时间" v-model="searchFrom.createdTime"/>-->
+                <!--                <q-input filled type="date" hint="结束时间" v-model="searchFrom.specifyTime"/>-->
 
 
                 <div class="q-mt-md content-center">
+
                   <q-btn label="搜索" type="submit" color="primary"/>
-                  <q-btn label="重置" type="reset" color="primary" flat />
+                  <q-btn label="重置" type="reset" color="primary" flat/>
                 </div>
               </q-item>
             </q-form>
@@ -111,7 +120,6 @@ import {ref} from "vue";
 import {useToggleDialog} from "src/composables/useToggleDialog.js";
 import CreateDialog from "pages/user/list/CreateDialog.vue";
 import UpdateDialog from "pages/user/list/UpdateDialog.vue";
-import {DatetimeFormat} from "vue-i18n";
 
 const updateDialogFlag = ref(false)
 const showDialog = ref(false);
@@ -126,7 +134,8 @@ const {
   fetchData,
   searchFrom,
   options,
-  onReset
+  onReset,
+  delUsers
 } = useUserSearch()
 const createToggleDialog = useToggleDialog(showDialog)
 const updateToggleDialog = useToggleDialog(updateDialogFlag)

@@ -1,6 +1,7 @@
 import {computed, onMounted, ref} from "vue";
 import {search} from "src/api/user.js";
 import {useNotify} from "src/composables/useNotify";
+import {useDialog} from "src/composables/useDialog";
 
 export const useUserSearch = () => {
   let scrollTargetRef = ""
@@ -8,11 +9,12 @@ export const useUserSearch = () => {
   let filter = ref('')
   let loading = ref(true)
   let selected = ref([])// 选择内容
-  let options=ref(["FEMALE","MALE","UNKNOWN","ALL"])
+  let options = ref(["FEMALE", "MALE", "UNKNOWN", "ALL"])
+
   // 搜索表单
   const searchFrom = ref({
     page: 0,
-    size: 5,
+    size: 10,
     id: '',
     createdTime: '',
     specifyTime: '',
@@ -21,6 +23,7 @@ export const useUserSearch = () => {
     unseal: 1,
     gender: 'MALE'
   })
+
   // 分页信息
   const pagination = ref({
     current: 0,
@@ -35,14 +38,18 @@ export const useUserSearch = () => {
   // 获取数据
   const fetchData = (current) => {
     loading.value = true
+    console.log("current===>", current)
     searchFrom.value.page = current
+    searchFrom.value.nickname = searchFrom.value.nickname.trim();
+    searchFrom.value.username = searchFrom.value.username.trim();
+    searchFrom.value.id = searchFrom.value.id.trim();
     search(searchFrom.value).then(res => {
-      if(res.code===200){
+      if (res.code === 200) {
         tableData.value = res.data.records
         pagination.value.rowsPerPage = res.data.size
         pagination.value.rowsNumber = res.data.total
         pagination.value.current = res.data.current
-      }else{
+      } else {
         useNotify().negativeNotify(res.message)
       }
 
@@ -50,17 +57,19 @@ export const useUserSearch = () => {
       loading.value = false
     })
   }
-  const onReset=()=>{
 
-    searchFrom.value.id ='';
-    searchFrom.value.username ='';
-    searchFrom.value.gender ='ALL';
-    searchFrom.value.createdTime ='';
-    searchFrom.value.specifyTime ='';
-    searchFrom.value.unseal =1;
-    searchFrom.value.specifyTime ='';
-
-
+  /**
+   * 重置表单
+   */
+  const onReset = () => {
+    searchFrom.value.id = undefined;
+    searchFrom.value.username = undefined;
+    searchFrom.value.nickname = undefined;
+    searchFrom.value.gender = undefined;
+    searchFrom.value.createdTime = undefined;
+    searchFrom.value.specifyTime = undefined;
+    searchFrom.value.unseal = 1;
+    searchFrom.value.specifyTime = undefined;
   }
 
   // 计算分页
@@ -71,8 +80,24 @@ export const useUserSearch = () => {
   // 钩子函数,初始化数据
   onMounted(fetchData)
 
+  // 删除用户
+  const delUsers = () => {
+    let count = selected.value.length;
+    let message = "";
+    selected.value.forEach(item => {
+      message += "<" + item.username + ">\n"
+    })
+    message += "这" + count + "项数据吗?"
+    useDialog().confirmDialog("确定删除吗?", message).then(r => {
+      if (r === 1) {
+        // TODO 删除并且重新发送请求
+      }
+    })
+  }
+
 
   return {
+    delUsers,
     selected,
     loading, // 加载状态
     scrollTargetRef, // 不知道

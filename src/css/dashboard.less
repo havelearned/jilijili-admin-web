@@ -43,74 +43,16 @@
   }
 
 
-  // 今日指标样式
-  .quota {
-    margin-top: 20px;
-    border-radius: 5px;
+  .page-margin{
+
+    margin: 70px 100px 100px;
+    overflow: hidden;
 
 
-    .quota-box {
-      overflow: hidden;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-
-      .quota-item {
-        width: 200px;
-        height: 93px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .quota-font {
-          color: rgb(94, 94, 94);
-          font-family: HarmonyOS Sans;
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 22px;
-          letter-spacing: -1px;
-          text-align: left;
-        }
-
-        .quota-point {
-          color: rgb(56, 56, 56);
-          font-family: SFUIText;
-          font-size: 30px;
-          font-weight: 800;
-          line-height: 38px;
-          letter-spacing: -1px;
-          text-align: left;
-        }
-
-        .quota-action-point {
-          color: rgba(0, 0, 0, 0.45);
-          font-family: HarmonyOS Sans;
-          font-size: 12px;
-          font-weight: 400;
-          line-height: 20px;
-          letter-spacing: -1px;
-          text-align: left;
-
-          .quota-action-data {
-            color: rgb(255, 73, 87);
-            font-family: HarmonyOS Sans;
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 20px;
-            letter-spacing: -1px;
-            text-align: left;
-          }
-
-        }
-
-      }
-
-      .quota-item:last-child {
-        border-right-color: white;
-      }
-
-    }
+    display: flex;
+    justify-content: space-between;
   }
+
 
 
   // 统计样式
@@ -128,13 +70,17 @@
       align-items: center;
       width: 300px;
       height: 150px;
+      overflow: hidden;
+
 
       .summary-row {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
+        .summary-text-box{
 
+        }
 
         .summary-font-point {
           opacity: 0.85;
@@ -173,10 +119,10 @@
     }
 
     .summary-line {
-
       width: 5px;
       height: 100px;
       border-right: 2px solid rgba(0, 0, 0, 0.85);
+      margin-left: 100px;
     }
 
 

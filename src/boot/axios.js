@@ -5,8 +5,7 @@ import {Loading, Notify} from "quasar"
 import {whiteList} from "src/permission.js";
 
 // const baseURL = import.meta.env.VITE_BASEURL_TENXUN
-const baseURL = import.meta.env.VITE_BASEURL_DEV
-// const baseURL = import.meta.env.VITE_BASEURL
+const baseURL = import.meta.env.VITE_BASEURL
 // console.log("import", import.meta)
 // console.log("import.url", import.meta.env.BASE_URL)
 // console.log("import.env.MODE", import.meta.env.MODE)

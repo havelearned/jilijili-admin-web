@@ -28,13 +28,19 @@
 
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <menus></menus>
-    </q-drawer>
+    <div class="fixed" style="height: 100%;">
+      <q-drawer show-if-above
+                v-model="leftDrawerOpen"
+                side="left"
+                bordered>
+        <menus></menus>
+      </q-drawer>
+    </div>
+
 
     <q-page-container>
       <router-view/>
-      <chat-fab></chat-fab>
+      <chat-fab v-if="false"></chat-fab>
       <br>
     </q-page-container>
   </q-layout>

@@ -72,6 +72,7 @@ const $q = useQuasar()
 
 const fixed = ref(true)
 const bar = ref(null)
+
 // 用户数据
 const userInfo = ref({
   username: "",
