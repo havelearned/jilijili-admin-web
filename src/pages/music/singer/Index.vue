@@ -128,13 +128,16 @@ const isOpenUpdateDialog = ref(null)
 const isOpenInfoDialog = ref(null);
 // 添加歌手
 const addRow = () => {
+  // TODO[1] 添加歌手操作
   isOpenCreateDialog.value.changeDialog()
 }
 const updateRow = (id) => {
+  // TODO[1] 修改歌手操作
   isOpenUpdateDialog.value.changeDialog()
 }
 
 const delRow = (id) => {
+  // TODO[1] 删除歌手操作
   useDialog().confirmDialog("确定删除吗?","消息").then(r=>{
     if(r){
       console.log("确定删除")
@@ -144,6 +147,7 @@ const delRow = (id) => {
   })
 }
 const infoRow = (id) => {
+  // TODO[1] 查询歌手信息,专辑信息,歌曲信息
   isOpenInfoDialog.value.changeDialog(id);
 
 }

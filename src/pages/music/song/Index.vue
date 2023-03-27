@@ -18,7 +18,7 @@
 
       <template v-slot:top="props">
         <div class="q-gutter-md">
-          <q-btn color="primary" :disable="loading" label="添加角色" @click="addRow"/>
+          <q-btn color="primary" :disable="loading" label="添加歌曲" @click="addRow"/>
           <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow(selected)"/>
           <q-checkbox size="xl" keep-color v-model="selectedAll" label="全选" color="teal" @click="checkAll"/>
         </div>

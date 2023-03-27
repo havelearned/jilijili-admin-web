@@ -83,6 +83,7 @@ export const useUserSearch = () => {
   // 删除用户
   const delUsers = () => {
     let count = selected.value.length;
+    if(count === 0) return
     let message = "";
     selected.value.forEach(item => {
       message += "<" + item.username + ">\n"

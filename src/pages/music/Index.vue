@@ -60,6 +60,7 @@
         <div>
           <singer :childHead="childHead" v-if="tab==='tab1'"/>
           <Album :childHead="childHead" v-if="tab==='tab2'"/>
+          <Song :childHead="childHead" v-if="tab==='tab3'"/>
         </div>
       </div>
     </div>
@@ -70,6 +71,7 @@
 <script setup>
 import Singer from "src/pages/music/singer/Index.vue";
 import Album from "src/pages/music/album/Index.vue";
+import Song from "src/pages/music/song/Index.vue";
 import {ref} from "vue";
 
 

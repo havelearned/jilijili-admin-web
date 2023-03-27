@@ -17,11 +17,11 @@
     >
 
 
-      <template v-slot:top>
+      <template v-slot:top="props">
         <div class="q-gutter-md">
           <q-btn color="primary" :disable="loading" label="添加专辑" @click="addRow"/>
-          <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow"/>
-          <q-checkbox size="xl" keep-color v-model="selectedAll" label="全选" color="teal" @click=""/>
+          <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow(selected)"/>
+          <q-checkbox size="xl" keep-color v-model="selectedAll" label="全选" color="teal" @click="checkAll"/>
         </div>
         <q-space/>
         <q-input borderless dense debounce="300" color="primary" v-model="filter">
@@ -46,69 +46,61 @@
             </q-img>
 
             <q-card-actions class="justify-center">
-              <q-btn-group  outline>
-                <q-btn outline color="brown" label="修改"/>
-                <q-btn outline color="brown" label="删除"/>
-                <q-btn  color="brown" label="专辑信息"/>
-                <q-checkbox style="margin-left: 20px" size="xl"  color="brown" dense v-model="props.selected"  label="选中" />
+              <q-btn-group outline>
+                <q-btn outline color="brown" label="修改" @click="updateRow(props.row.id)"/>
+                <q-btn outline color="brown" label="删除" @click="removeRow(props.row)"/>
+                <q-btn color="brown" label="专辑信息" @click="infoRow(props.row.id)"/>
+                <q-checkbox style="margin-left: 20px" size="xl" color="brown" dense v-model="props.selected"
+                            label="选中"/>
               </q-btn-group>
             </q-card-actions>
           </q-card>
-          <q-card :class="props.selected ? 'bg-grey-2' : ''"><q-separator/>
+          <q-card :class="props.selected ? 'bg-grey-2' : ''">
+            <q-separator/>
 
           </q-card>
         </div>
       </template>
 
     </q-table>
+    <CreateDialog ref="isOpenCreateDialog"/>
+    <UpdateDialog ref="isOpenUpdateDialog"/>
   </div>
 </template>
 
 <script setup>
 import {ref} from 'vue'
+import CreateDialog from "./CreateDialog.vue";
+import UpdateDialog from "./UpdateDialog.vue";
+import {useDialog} from "src/composables/useDialog";
 
-const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: '歌手Id',
-    align: 'center',
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'singerName', align: 'center', label: '歌手名称', field: row => row.singerName,
-    format: val => `${val}`, sortable: true
-  },
-  {
-    name: 'singerDetails', align: 'center', label: '歌手简介', field: row => row.singerDetails,
-    format: val => `${val}`, sortable: true
-  },
-  // {name: 'singerPhoto', align: 'center', label: '歌手头像', field: row => row.name,
-  //   format: val => `${val}`, sortable: true},
-  {
-    name: 'singerType', align: 'center', label: '歌手类型', field: row => row.singerType,
-    format: val => `${val}`, sortable: true
-  },
-  {
-    name: 'createdTime', align: 'center', label: '创建时间', field: row => row.createdTime,
-    format: val => `${val}`, sortable: true
-  },
-]
+const isOpenCreateDialog = ref(null)
+const isOpenUpdateDialog = ref(null)
+const addRow = () => {
+  isOpenCreateDialog.value.changeDialog()
+}
+const updateRow = (id) => {
+  isOpenUpdateDialog.value.changeDialog(id);
+}
 
-const rows = [
-  {
-    name: 'Frozen Yogurt',
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    sodium: 87,
-    calcium: '14%',
-    iron: '1%'
-  }
-]
+const infoRow = (id) => {
+
+}
+const removeRow = (row) => {
+  console.log("row========>", row)
+  // TODO[1] 删除歌手操作
+  useDialog().confirmDialog("确定删除吗?", row + '').then(r => {
+    if (r) {
+      console.log("确定删除")
+    } else {
+      console.log("取消删除")
+    }
+  })
+}
+
+const checkAll = () => {
+
+}
 
 const tableDate = ref([
   {
@@ -145,5 +137,35 @@ const initialPagination = {
   rowsPerPage: 8
   // rowsNumber: xx if getting data from a server
 }
+const columns = [
+  {
+    name: 'id',
+    required: true,
+    label: '歌手Id',
+    align: 'center',
+    field: row => row.id,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'singerName', align: 'center', label: '歌手名称', field: row => row.singerName,
+    format: val => `${val}`, sortable: true
+  },
+  {
+    name: 'singerDetails', align: 'center', label: '歌手简介', field: row => row.singerDetails,
+    format: val => `${val}`, sortable: true
+  },
+  // {name: 'singerPhoto', align: 'center', label: '歌手头像', field: row => row.name,
+  //   format: val => `${val}`, sortable: true},
+  {
+    name: 'singerType', align: 'center', label: '歌手类型', field: row => row.singerType,
+    format: val => `${val}`, sortable: true
+  },
+  {
+    name: 'createdTime', align: 'center', label: '创建时间', field: row => row.createdTime,
+    format: val => `${val}`, sortable: true
+  },
+]
+
 
 </script>

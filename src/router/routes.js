@@ -39,8 +39,8 @@ const menuRoutes = [
         children: [
           {
             path: '/music',
-            name: "歌曲管理",
-            meta: {title: "歌曲管理", icon: "jilijili:music", path: "/music"},
+            name: "快速浏览",
+            meta: {title: "快速浏览", icon: "jilijili:music", path: "/music"},
             component: () => import('pages/music/Index.vue'),
           },
           {
@@ -54,6 +54,12 @@ const menuRoutes = [
             name: "专辑管理",
             meta: {title: "专辑管理", icon: "jilijili:music", path: "alibum"},
             component: () => import('pages/music/album/Index.vue'),
+          },
+          {
+            path: '/song',
+            name: "歌曲管理",
+            meta: {title: "歌曲管理", icon: "jilijili:music", path: "/song"},
+            component: () => import('pages/music/song/Index.vue'),
           },
         ]
       },
