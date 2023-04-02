@@ -2,12 +2,19 @@
   <div class="q-pa-md ">
     <q-card class="my-card page">
       <div class="tree-card">
+        <div class="q-gutter-sm">
+          <q-btn size="sm" color="primary" @click="selectGoodService" label="Select 'Good service'"/>
+          <q-btn v-if="selected" size="sm" color="red" @click="unselectNode" label="Unselect node"/>
+        </div>
         <q-card class="my-card">
           <q-card-section>
             <q-tree
               :nodes="props"
-              default-expand-all
+              no-connectors
+              accordion
               v-model:selected="treeSelected"
+              v-model:expanded="expanded"
+              @update:selected="selectGoodService"
               node-key="label"
             />
           </q-card-section>
@@ -186,32 +193,32 @@ const columns = [
 ]
 
 
-const selectGoodService = () => {
-  if (selected.value !== 'Good service') {
-    selected.value = 'Good service'
-  }
+const selectGoodService = (array) => {
+  console.log("选择了=>", array)
+  console.log("选择了=>", selected.value)
 }
 const treeSelected = ref(null)
+const expanded = ref(['Admin'])
 const props = [
   {
-    label: '文件类型',
+    label: '选择角色',
     avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
     children: [
       {
-        label: 'IMAGE',
+        label: 'Admin',
         icon: 'photo',
         children: [
-          {label: 'PNG'},
-          {label: 'JPG'}
+          {label: '添加'},
+          {label: '修改'},
+          {label: '删除'},
+          {label: '查询'},
         ]
       },
       {
-        label: 'FILE',
+        label: '普通用户',
         icon: 'room_service',
         children: [
-          {label: 'PDF'},
-          {label: 'WORD'},
-          {label: 'MD'},
+          {label: '查询'},
         ]
       },
       {
@@ -237,16 +244,18 @@ const props = [
 
 
 <style scoped lang="less">
-.page{
+.page {
   display: flex;
   width: 100%;
   height: 100%;
-  .tree-card{
+
+  .tree-card {
     margin-right: 20px;
     height: 100%;
+    width: 300px;
   }
 
-  .table-card{
+  .table-card {
     width: 100%;
     height: 100%;
   }

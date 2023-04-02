@@ -9,7 +9,7 @@ export const useUserSearch = () => {
   let filter = ref('')
   let loading = ref(true)
   let selected = ref([])// 选择内容
-  let options = ref(["FEMALE", "MALE", "UNKNOWN", "ALL"])
+  let options = ref(["FEMALE", "MALE", "UNKNOWN", "ALL", null])
 
   // 搜索表单
   const searchFrom = ref({
@@ -38,11 +38,9 @@ export const useUserSearch = () => {
   // 获取数据
   const fetchData = (current) => {
     loading.value = true
-    console.log("current===>", current)
+
     searchFrom.value.page = current
-    searchFrom.value.nickname = searchFrom.value.nickname.trim();
-    searchFrom.value.username = searchFrom.value.username.trim();
-    searchFrom.value.id = searchFrom.value.id.trim();
+
     search(searchFrom.value).then(res => {
       if (res.code === 200) {
         tableData.value = res.data.records
@@ -83,7 +81,7 @@ export const useUserSearch = () => {
   // 删除用户
   const delUsers = () => {
     let count = selected.value.length;
-    if(count === 0) return
+    if (count === 0) return
     let message = "";
     selected.value.forEach(item => {
       message += "<" + item.username + ">\n"

@@ -42,7 +42,8 @@
       class="q-pa-md-sm"
       selection="multiple"
       v-model:selected="selected"
-      :pagination="initialPagination"
+      hide-pagination
+      v-model:pagination="pagination"
       :loading="loading"
       virtual-scroll
     >
@@ -51,8 +52,7 @@
       <template v-slot:top>
         <div class="q-gutter-md">
           <q-btn color="primary" :disable="loading" label="添加歌手" @click="addRow"/>
-          <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow"/>
-          <q-checkbox size="xl" keep-color v-model="selectedAll" label="全选" color="teal" @click=""/>
+          <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow(selected)"/>
         </div>
         <q-space/>
         <q-input borderless dense debounce="300" color="primary" v-model="filter">
@@ -74,7 +74,7 @@
               <q-btn-group outline class="text-weight-light" style="display: flex;justify-content:center;height: 40px;">
                 <!--                :label="props.row.id"-->
                 <q-btn outline class="q-pa-sm" size="sm" color="brown" label="修改" @click="updateRow(props.row.id)"/>
-                <q-btn outline class="q-pa-sm" size="sm" color="brown" label="删除" @click="delRow(props.row.id)"/>
+                <q-btn outline class="q-pa-sm" size="sm" color="brown" label="删除" @click="delRow(props.row)"/>
                 <q-btn class="q-pa-sm" size="sm" color="brown" label="歌手信息" @click="infoRow(props.row.id)"/>
                 <q-checkbox style="margin-left: 20px" size="xl" color="brown" dense v-model="props.selected"
                             label="选中"/>
@@ -86,25 +86,54 @@
 
             <q-card>
               <q-card-section class="text-center" @click="checkSingerInfo(props.row.id)">
-                <q-avatar size="100px" font-size="52px" color="teal" text-color="white">
-                  <img src="https://cdn.quasar.dev/img/avatar.png">
+                <q-avatar size="200px" font-size="52px" color="teal" text-color="white">
+                  <q-img :src="props.row.singerPhoto"
+                         :srcset="props.row.singerPhoto+' 300w'">
+                    <div class="absolute-bottom text-body1 text-center">
+                      <div class="q-ma-lg q-pa-sm-lg">
+                        <strong>{{ props.row.singerName }}</strong>
+                        <br>
+                        <br>
+                        <q-badge outline color="orange" :label="props.row.singerType >=2 ? '原唱':'翻唱'"/>
+                      </div>
+                    </div>
+                  </q-img>
                 </q-avatar>
                 <br>
-                <div class="q-ma-lg q-pa-sm-lg">
-                  <strong>名字:{{ props.row.singerName }}</strong>
-                  <strong>主唱类型:{{ props.row.singerType }}</strong>
-                </div>
+
 
               </q-card-section>
               <q-separator/>
-              <q-card-section class="flex flex-center" :style="{ fontSize: 20 + 'px' }">
-                <div>简介:{{ props.row.singerDetails }}</div>
+              <q-card-section class="flex flex-center" :style="{ fontSize: 13 + 'px' }">
+                <div class="singer-profile-card">{{ props.row.singerDetails }}</div>
               </q-card-section>
             </q-card>
           </q-card>
         </div>
       </template>
+
+
     </q-table>
+    <!--   分页    -->
+    <div class="page-bar row justify-center q-mt-md ">
+      <q-pagination
+        direction-links
+        unelevated
+        color="black"
+        active-color="purple"
+        @update:modelValue="fetchData"
+        v-model="pagination.current"
+        row-key="id"
+        :max="pagesNumber"
+        :max-pages="pagination.rowsPerPage"
+        :boundary-numbers="false"
+        input
+        boundary-links
+      >
+      </q-pagination>
+
+
+    </div>
 
     <CreateDialog ref="isOpenCreateDialog"/>
     <UpdateDialog ref="isOpenUpdateDialog"/>
@@ -117,7 +146,7 @@ import {ref} from 'vue'
 import CreateDialog from './CreateDialog.vue'
 import UpdateDialog from "./UpdateDialog.vue"
 import InfoDialog from "./InfoDialog.vue";
-import {useDialog} from "src/composables/useDialog";
+import {useMusicData} from "src/composables/music/useMusicData";
 
 const props = defineProps({
   childHead: Boolean,
@@ -126,7 +155,17 @@ const {childHead} = props;
 const isOpenCreateDialog = ref(null)
 const isOpenUpdateDialog = ref(null)
 const isOpenInfoDialog = ref(null);
-// 添加歌手
+
+const {
+  tableDate,
+  pagination,
+  fetchData,
+  pagesNumber,
+  delRow,
+  removeRow,
+} = useMusicData()
+
+
 const addRow = () => {
   // TODO[1] 添加歌手操作
   isOpenCreateDialog.value.changeDialog()
@@ -136,68 +175,22 @@ const updateRow = (id) => {
   isOpenUpdateDialog.value.changeDialog()
 }
 
-const delRow = (id) => {
-  // TODO[1] 删除歌手操作
-  useDialog().confirmDialog("确定删除吗?","消息").then(r=>{
-    if(r){
-      console.log("确定删除")
-    }else{
-      console.log("取消删除")
-    }
-  })
-}
 const infoRow = (id) => {
   // TODO[1] 查询歌手信息,专辑信息,歌曲信息
   isOpenInfoDialog.value.changeDialog(id);
 
 }
-// 删除所有
-
-const removeRow = () => {
-
-}
-
-const checkSingerInfo=(id)=>{
-  useDialog().confirmDialog("确定删除吗?","消息")
-
-}
 
 
-const tableDate = ref([
-  {
-    id: 1, //  歌手id
-    singerName: 1, // 歌手名称
-    singerDetails: 1, // 歌手信息
-    singerPhoto: 1, // 歌手头像
-    singerType: 1, // 歌手类型
-    createdTime: 1, // 创建时间
-    specifyTime: 1, // 匹配时间
-  },
-])
-for (let i = 2; i < 12; i++) {
-  let newItem = {
-    id: i, //  歌手id
-    singerName: 1, // 歌手名称
-    singerDetails: 1, // 歌手信息
-    singerPhoto: 1, // 歌手头像
-    singerType: 1, // 歌手类型
-    createdTime: 1, // 创建时间
-    specifyTime: 1, // 匹配时间
-  };
+const checkSingerInfo = (id) => {
+  alert("歌手信息")
 
-  tableDate.value.push(newItem)
 }
 const filter = ref('')
 const selected = ref([])
 const selectedAll = ref(true);
 const loading = ref(false)
-const initialPagination = {
-  sortBy: 'desc',
-  descending: false,
-  page: 1,
-  rowsPerPage: 8
-  // rowsNumber: xx if getting data from a server
-}
+
 const columns = [
   {
     name: 'id',
