@@ -51,15 +51,63 @@
 
       <template v-slot:top>
         <div class="q-gutter-md">
-          <q-btn color="primary" :disable="loading" label="添加歌手" @click="addRow"/>
-          <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow(selected)"/>
+          <q-btn-group>
+            <q-card-section>
+              <q-btn color="primary" :disable="loading" label="添加歌手" @click="addRow"/>
+            </q-card-section>
+            <q-card-section>
+              <q-btn class="q-ml-sm" color="deep-orange" :disable="loading" label="删除" @click="removeRow(selected)"/>
+            </q-card-section>
+          </q-btn-group>
+
+
         </div>
         <q-space/>
-        <q-input borderless dense debounce="300" color="primary" v-model="filter">
-          <template v-slot:append>
-            <q-icon name="search"/>
-          </template>
-        </q-input>
+        <div class="">
+          <q-form @submit="search" @reset="searchReset">
+            <q-btn-group>
+
+
+            <q-card-section class="row q-gutter-lg q-pa-lg-lg justify-center">
+              <q-input
+                filled
+                v-model="searchFrom.id"
+                label="id"
+                lazy-rules
+              />
+
+              <q-input
+                filled
+                type="tel"
+                v-model="searchFrom.singerName"
+                label="歌手名称"
+              />
+
+              <q-select filled
+                        clearable
+                        transition-show="flip-up"
+                        transition-hide="flip-down"
+                        v-model="searchFrom.singerType"
+                        label="歌手类型"
+                        lazy-rules
+                        emit-value
+                        map-options
+                        :options="singer_type_selection"></q-select>
+
+              <q-input v-model="searchFrom.createdTime" filled type="date" hint="开始时间"/>
+              <q-input v-model="searchFrom.specifyTime" filled type="date" hint="结束时间"
+
+              />
+<!--              :rules="[value => value && value>=searchFrom.createdTime || '结束时间不能小于开始时间'] "-->
+
+              <div class="row justify-center">
+                <q-btn flat type="submit">搜索</q-btn>
+                <q-btn flat type="reset">重置</q-btn>
+              </div>
+            </q-card-section>
+            </q-btn-group>
+          </q-form>
+        </div>
       </template>
 
       <template v-slot:item="props">
@@ -86,19 +134,19 @@
 
             <q-card>
               <q-card-section class="text-center" @click="checkSingerInfo(props.row.id)">
-                <q-avatar size="200px" font-size="52px" color="teal" text-color="white">
-                  <q-img :src="props.row.singerPhoto"
-                         :srcset="props.row.singerPhoto+' 300w'">
-                    <div class="absolute-bottom text-body1 text-center">
-                      <div class="q-ma-lg q-pa-sm-lg">
-                        <strong>{{ props.row.singerName }}</strong>
-                        <br>
-                        <br>
-                        <q-badge outline color="orange" :label="props.row.singerType >=2 ? '原唱':'翻唱'"/>
-                      </div>
+                <q-img
+                  ratio="1"
+                  :srcset="props.row.singerPhoto+' 300w'">
+                  <div class="absolute-bottom text-body1 text-center">
+                    <div class="q-ma-lg q-pa-sm-lg">
+                      <strong>{{ props.row.singerName }}</strong>
+                      <br>
+                      <br>
+                      <q-badge outline color="orange" :label="props.row.singerType"/>
                     </div>
-                  </q-img>
-                </q-avatar>
+                  </div>
+                </q-img>
+
                 <br>
 
 
@@ -146,7 +194,8 @@ import {ref} from 'vue'
 import CreateDialog from './CreateDialog.vue'
 import UpdateDialog from "./UpdateDialog.vue"
 import InfoDialog from "./InfoDialog.vue";
-import {useMusicData} from "src/composables/music/useMusicData";
+import {useSingerData} from "src/composables/music/useSingerData";
+import {singer_type_selection} from "src/utils/dictionary";
 
 const props = defineProps({
   childHead: Boolean,
@@ -157,22 +206,24 @@ const isOpenUpdateDialog = ref(null)
 const isOpenInfoDialog = ref(null);
 
 const {
+  searchFrom,
+  searchReset,
+  search,
   tableDate,
   pagination,
   fetchData,
   pagesNumber,
   delRow,
   removeRow,
-} = useMusicData()
+} = useSingerData()
 
 
 const addRow = () => {
-  // TODO[1] 添加歌手操作
   isOpenCreateDialog.value.changeDialog()
 }
 const updateRow = (id) => {
-  // TODO[1] 修改歌手操作
-  isOpenUpdateDialog.value.changeDialog()
+
+  isOpenUpdateDialog.value.changeDialog(id)
 }
 
 const infoRow = (id) => {

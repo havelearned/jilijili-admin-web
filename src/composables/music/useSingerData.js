@@ -3,10 +3,15 @@ import {deleted, list} from "src/api/singer"
 import {useDialog} from "src/composables/useDialog";
 import {useNotify} from "src/composables/useNotify";
 
-export const useMusicData = () => {
+export const useSingerData = () => {
   const searchFrom = ref({
     page: 1,
     size: 8,
+    id: undefined,
+    singerName: undefined,
+    singerType: undefined,
+    createdTime: undefined, // 创建时间
+    specifyTime: undefined, // 匹配时间
     locked: 0
 
   });
@@ -21,6 +26,7 @@ export const useMusicData = () => {
       specifyTime: 1, // 匹配时间
     },
   ])
+
 
   let pagination = ref({
     current: 0,
@@ -38,7 +44,6 @@ export const useMusicData = () => {
   })
 
   const fetchData = (current) => {
-    console.log("current===========>", current)
     searchFrom.value.page = current
     list(searchFrom.value).then(res => {
       console.log("歌手数据=>", res)
@@ -57,6 +62,21 @@ export const useMusicData = () => {
     return Math.ceil(pagination.value.rowsNumber / pagination.value.rowsPerPage)
   })
 
+
+  const search = () => {
+    console.log("搜索表单数据=>", searchFrom.value)
+
+    fetchData(searchFrom.value.page)
+
+  }
+  const searchReset = () => {
+    console.log("重置")
+    searchFrom.value.createdTime = undefined
+    searchFrom.value.specifyTime = undefined
+    searchFrom.value.singerName = undefined
+    searchFrom.value.singerType = undefined
+    searchFrom.value.id = undefined
+  }
 
   // 删除
   const delRow = (row) => {
@@ -81,21 +101,28 @@ export const useMusicData = () => {
   // 删除全部
   const removeRow = (selected) => {
     let ids = '';
+    let count = 0;
     selected.forEach(item => {
       ids += item.id + ','
+      count++;
     })
+
     if (!ids) {
       useNotify().warningNotify("未选中任何内容")
       return
     }
-    deleted(ids).then(res => {
-      if (res.code === 200) {
-        location.reload()
-        useNotify().infoNotify(res.message)
-      } else {
-        useNotify().negativeNotify(res.message)
-      }
 
+    useDialog().confirmDialog('删除?', `确定删除${count}项数据吗?`).then(res => {
+      if (res) {
+        deleted(ids).then(res => {
+          if (res.code === 200) {
+            location.reload()
+            useNotify().infoNotify(res.message)
+          } else {
+            useNotify().negativeNotify(res.message)
+          }
+        })
+      }
     })
 
 
@@ -103,6 +130,10 @@ export const useMusicData = () => {
 
 
   return {
+    searchFrom,
+    searchReset,
+
+    search,
     removeRow,
     delRow,
     pagination,

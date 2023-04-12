@@ -77,7 +77,7 @@ import {ref} from "vue";
 
 const childHead = ref(false);
 const keywords = ref('');
-const tab = ref('tab1');
+const tab = ref('tab2');
 </script>
 
 <style scoped lang="less">

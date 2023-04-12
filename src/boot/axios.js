@@ -47,11 +47,11 @@ api.interceptors.response.use(response => {
         store.dispatch("logout")
         break;
     }
-  }else if(response !== undefined){
+  } else if (response !== undefined) {
     Notify.create({
       type: "negative", message: response.data.message, position: "top",
     })
-  }else{
+  } else {
     handleErrorMessages(error);
   }
   return Promise.reject(error)

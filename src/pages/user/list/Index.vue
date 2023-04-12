@@ -24,7 +24,8 @@
       <!--   表格内容   -->
       <div>
         <q-table
-          row-key="username"
+          row-key="id"
+          separator="cell"
           :rows="tableData"
           :columns="columns"
           :filter="filter"
@@ -46,14 +47,11 @@
                 双击条目即可修改
               </q-tooltip>
             </q-btn>
-
             <q-space/>
             <q-form
-              @submit="fetchData(pagination.page)" @reset="onReset" class="q-gutter">
+              @submit="fetchData(pagination.page)" @reset="onReset" class="q-gutter justify-center">
               <q-item class="row-lg q-gutter-md">
-
-
-                <q-icon name="jilijili:exclamation" style="width: 32px;height: 32px;" >
+                <q-icon name="jilijili:exclamation" style="width: 32px;height: 32px;">
                   <q-tooltip anchor="top middle" self="center middle">
                     用户名称,昵称搜索,自动删除前后空格
                   </q-tooltip>
@@ -68,7 +66,6 @@
 
 
                 <div class="q-mt-md content-center">
-
                   <q-btn label="搜索" type="submit" color="primary"/>
                   <q-btn label="重置" type="reset" color="primary" flat/>
                 </div>
@@ -83,7 +80,6 @@
               icon-right="archive"
               label="Export to csv"
               no-caps
-
             />
           </template>
         </q-table>

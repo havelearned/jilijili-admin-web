@@ -111,7 +111,7 @@ const infoRow = (id) => {
 }
 const removeRow = (row) => {
   console.log("row========>", row)
-  // TODO[1] 删除歌手操作
+
   useDialog().confirmDialog("确定删除吗?", row + '').then(r => {
     if (r) {
       console.log("确定删除")

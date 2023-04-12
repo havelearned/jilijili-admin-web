@@ -1,102 +1,188 @@
 <template>
   <q-dialog
     v-model="isOpen"
+    persistent transition-show="scale" transition-hide="scale"
   >
-    <q-card style="width: 700px; max-width: 80vw;">
+
+
+    <q-card flat bordered class="my-card bg-grey-1">
+
       <q-card-section>
-        <div class="text-h6">添加歌手</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        <div class="row justify-center">
-          <q-card-section class="col-6">
-            <q-input filled
-                     v-model="createData.singerName"
-                     label="歌手名称(艺名)"
-                     hint="2-16个字符" lazy-rules
-                     spellcheck="false"
-                     :rules="[ val => val && val.length > 0 || '请输入内容']"
-            />
-          </q-card-section>
-
-          <q-card-section class="col-6">
-            <q-select filled v-model="createData.singerType"
-                      :options="options" label="歌手类型">
-              <template v-if="createData.singerType" v-slot:append>
-                <q-icon name="cancel" @click.stop.prevent="createData.singerType = null" class="cursor-pointer"/>
-              </template>
-            </q-select>
-          </q-card-section>
-
-          <q-card-section class="col-6">
-
-            <q-uploader
-              @added="attachmentUploaded"
-              @uploaded="attachmentUploaded"
-              @uploading="uploading"
-              @factory-failed="factoryFailed"
-              @finish="finish"
-              :url="url"
-              style="max-width: 300px"
-              hide-upload-button
-              label="歌手头像上传"
-              multiple
-              accept=".jpg, image/*"
-              max-file="1"
-              auto-upload
-              no-thumbnails
-              @rejected="onRejected"
-            />
-          </q-card-section>
-
-          <q-card-section class="col-6">
-            <q-input filled
-                     v-model="createData.singerDetails"
-                     label="歌手介绍"
-                     hint="2-998个字符" lazy-rules
-                     type="textarea"
-                     spellcheck="false"
-                     :rules="[ val => val && val.length > 2 || '请输入内容']"
-            />
-          </q-card-section>
+        <div class="row items-center no-wrap">
+          <div class="col">
+            <div class="text-h6">添加歌手</div>
+          </div>
         </div>
       </q-card-section>
+      <q-form @submit="onSubmit" @reset="onReset">
+        <q-card-section>
+          <q-input
+            clearable
+            filled
+            v-model="singerData.singerName"
+            label="歌手名称(艺名)"
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || '歌手名称不能为空']"
+          />
+          <q-select filled
+                    clearable
+                    transition-show="flip-up"
+                    transition-hide="flip-down"
+                    v-model="singerData.singerType"
+                    label="歌手类型"
+                    lazy-rules
+                    emit-value
+                    map-options
+                    :rules="[value => value|| '歌手类型不能为空']"
+                    :options="singer_type_selection">
 
-      <q-card-actions align="right" class="bg-white text-teal">
-        <q-btn flat label="添加" v-close-popup/>
-        <q-btn flat label="取消" v-close-popup/>
-      </q-card-actions>
+          </q-select>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            filled
+            clearable
+            type="textarea"
+            v-model="singerData.singerDetails"
+            shadow-text="0-998个字符"
+            label="歌手介绍"
+          />
+        </q-card-section>
+
+        <q-card-section>
+          <q-uploader
+            :url="uploadOssUrl"
+            field-name="file"
+            accept=".jpg, .png, .gif, ,.jpeg/*"
+            @uploaded="uploaded"
+            :max-files="1"
+            auto-upload
+            label="歌手上传">
+            <template v-slot:list="scope">
+              <q-list separator>
+                <q-item v-for="file in scope.files" :key="file.__key">
+                  <q-item-section>
+                    <q-item-label class="full-width ellipsis">
+                      {{ file.name }}
+                    </q-item-label>
+
+                    <q-item-label caption>
+                      Status: {{ file.__status }}
+                    </q-item-label>
+
+                    <q-item-label caption>
+                      {{ file.__sizeLabel }} / {{ file.__progressLabel }}
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section
+                    v-if="file.__img"
+                    thumbnail
+                    class="gt-xs"
+                  >
+                    <img :src="file.__img.src" :alt="file.name">
+                  </q-item-section>
+
+                  <q-item-section top side>
+                    <q-btn
+                      class="gt-xs"
+                      size="12px"
+                      flat
+                      dense
+                      round
+                      icon="delete"
+                      @click="scope.removeFile(file)"
+                    />
+                  </q-item-section>
+                </q-item>
+
+              </q-list>
+            </template>
+          </q-uploader>
+          <q-input
+            clearable
+            filled
+            label="头像地址"
+            lazy-rules
+            :rules="[value => value || '歌手头像不能为空']"
+            type="tel"
+            disable
+            v-model="singerData.singerPhoto"></q-input>
+        </q-card-section>
+
+        <q-separator/>
+        <q-card-section class="justify-center row q-gutter-lg">
+          <q-btn fab color="primary" type="submit" :loading="btnLoading">添加</q-btn>
+          <q-btn fab color="grey" type="reset">重置</q-btn>
+          <q-btn fab flat type="reset" @click="isOpen=!isOpen">取消</q-btn>
+        </q-card-section>
+      </q-form>
     </q-card>
+    <q-ajax-bar
+      ref="bar"
+      position="bottom"
+      color="accent"
+      size="10px"
+      skip-hijack
+    />
   </q-dialog>
 </template>
 
 <script setup>
 
 import {ref} from "vue";
+import {singer_type_selection} from "src/utils/dictionary";
+import {addSinger} from "src/api/singer";
 import {useNotify} from "src/composables/useNotify";
 import {uploadOssUrl} from "src/api/upload";
-import {useUpload} from "src/composables/useUpload";
-
-const{
-  onRejected,
-  attachmentUploaded,
-  factoryFailed,
-  uploading,
-  finish
-}=useUpload()
 
 let isOpen = ref(false);
-const url = uploadOssUrl
-console.log(url)
-const createData = ref(
-  {
-    singerName: null, // 歌手名称
-    singerType: '原唱', // 歌手类型
-    singerDetails: null, // 歌手信息
-    singerPhoto: null, // 歌手头像
-  },
-)
-const options = ref(['原唱', '翻唱'])
+let btnLoading = ref(false)
+const bar = ref(null)
+const singerData = ref({
+  singerName: undefined,
+  singerType: undefined,
+  singerDetails: undefined,
+  singerPhoto: undefined
+})
+const uploaded = (info) => {
+  let res = JSON.parse(info.xhr.response);
+  if (res.code === 200) {
+    useNotify().infoNotify("头像上传成功")
+    singerData.value.singerPhoto = res.data;
+    return
+  }
+  useNotify().infoNotify("头像上传失败")
+
+
+}
+const onSubmit = () => {
+  btnLoading.value = true
+  const barRef = bar.value
+  barRef.start()
+
+  console.log("提交表单", singerData.value)
+  addSinger(singerData.value).then(res => {
+    console.log(res)
+    if (res.code === 200) {
+      useNotify().infoNotify(res.message)
+      isOpen.value = !isOpen.value
+    } else {
+      useNotify().negativeNotify(res.message)
+    }
+    btnLoading.value = false
+    barRef.stop()
+  })
+
+}
+
+const onReset = () => {
+  console.log("重置表单")
+  singerData.value.singerName = undefined
+  singerData.value.singerType = undefined
+  singerData.value.singerDetails = undefined
+  singerData.value.singerPhoto = undefined
+}
 
 const changeDialog = () => {
   isOpen.value = !isOpen.value;
@@ -105,15 +191,9 @@ defineExpose({
   changeDialog
 })
 
-const addData = {
-  singerName: undefined,
-  singerPhoto: undefined,
-  singerDetails: undefined,
-  singerType: undefined
-}
 
 </script>
 
-<style scoped>
+<style scoped lang="less">
 
 </style>
