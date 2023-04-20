@@ -37,12 +37,12 @@ const menuRoutes = [
         meta: {title: "音乐管理", icon: "jilijili:music", path: "/music"},
         // component:()=> import('pages/music/Index.vue'),
         children: [
-          {
-            path: '/music',
-            name: "快速浏览",
-            meta: {title: "快速浏览", icon: "jilijili:music", path: "/music"},
-            component: () => import('pages/music/Index.vue'),
-          },
+          // {
+          //   path: '/music',
+          //   name: "快速浏览",
+          //   meta: {title: "快速浏览", icon: "jilijili:music", path: "/music"},
+          //   component: () => import('pages/music/Index.vue'),
+          // },
           {
             path: '/singer',
             name: "歌手管理",

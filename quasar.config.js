@@ -9,10 +9,10 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 
-const { configure } = require('quasar/wrappers');
+const {configure} = require('quasar/wrappers');
 const path = require('path');
 
-module.exports = configure(function ( ctx ) {
+module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli/prefetch-feature
     // preFetch: true,
@@ -22,19 +22,22 @@ module.exports = configure(function ( ctx ) {
     // https://v2.quasar.dev/quasar-cli/boot-files
     boot: [
       'i18n',
-      'axios'
+      'axios',
+      'msg',
+      'audio'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: [
       'app.sass',
-      'my-app-icon.css'
+      'my-app-icon.css',
+      'app.styl'
     ],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v5',
+      'mdi-v5',
       // 'fontawesome-v6',
       // 'eva-icons',
       // 'themify',
@@ -48,7 +51,7 @@ module.exports = configure(function ( ctx ) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
       target: {
-        browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
+        browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node16'
       },
 
@@ -85,16 +88,31 @@ module.exports = configure(function ( ctx ) {
     devServer: {
       https: false,
       open: false, // opens browser window automatically
-      disableHostCheck:true,
+      disableHostCheck: true,
+      port:9665,
+      proxy:{
+        '/jilijili':{
+          target: 'http://127.0.0.1:8080',
+          changeOrigin: true,
+        }
+      }
 
 
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
+      iconSet: 'material-icons',
+      importStrategy: 'auto',
       config: {
-        notify:{},
-        loading: { /* look at QuasarConfOptions from the API card */ }
+        notify: {
+          position: 'top',
+          timeout: 4000,
+          color: 'info',
+          icon: 'info',
+          actions: [{ icon: 'close', color: 'white' }],
+        },
+        loading: { /* look at QuasarConfOptions from the API card */}
       },
 
       // iconSet: 'material-icons', // Quasar icon set
@@ -111,7 +129,9 @@ module.exports = configure(function ( ctx ) {
       plugins: [
         'Notify',
         'Loading',
-        'Dialog'
+        'Dialog',
+        'Notify',
+        'AppFullscreen',
       ]
     },
 
@@ -134,7 +154,7 @@ module.exports = configure(function ( ctx ) {
     // https://v2.quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
       // ssrPwaHtmlFilename: 'offline.html', // do NOT use dashboard.html as name!
-                                          // will mess up SSR
+      // will mess up SSR
 
       // extendSSRWebserverConf (esbuildConf) {},
       // extendPackageJson (json) {},

@@ -14,6 +14,9 @@ const baseURL = import.meta.env.VITE_BASEURL
 const api = axios.create({
   baseURL: baseURL,
 })
+
+export const NeedLoginCode = [401, 402, 403];
+
 const tokenPrefix = "Bearer ";
 
 // 请求拦截器
@@ -76,7 +79,7 @@ function handleErrorMessages(error) {
 }
 
 
-export default boot(({app}) => {
+export default boot(({app, Vue}) => {
   app.config.globalProperties.$axios = axios
   app.config.globalProperties.$api = api
 })

@@ -34,18 +34,18 @@
     </div>
     <q-table
       grid
+      row-key="id"
+      class="q-pa-md-sm"
+      selection="multiple"
+      binary-state-sort
+      virtual-scroll
+      hide-pagination
       :filter="filter"
       :rows="tableDate"
       :columns="columns"
-      row-key="id"
-      binary-state-sort
-      class="q-pa-md-sm"
-      selection="multiple"
-      v-model:selected="selected"
-      hide-pagination
-      v-model:pagination="pagination"
       :loading="loading"
-      virtual-scroll
+      v-model:selected="selected"
+      v-model:pagination="pagination"
     >
 
 
@@ -68,43 +68,43 @@
             <q-btn-group>
 
 
-            <q-card-section class="row q-gutter-lg q-pa-lg-lg justify-center">
-              <q-input
-                filled
-                v-model="searchFrom.id"
-                label="id"
-                lazy-rules
-              />
+              <q-card-section class="row q-gutter-lg q-pa-lg-lg justify-center">
+                <q-input
+                  filled
+                  v-model="searchFrom.id"
+                  label="id"
+                  lazy-rules
+                />
 
-              <q-input
-                filled
-                type="tel"
-                v-model="searchFrom.singerName"
-                label="歌手名称"
-              />
+                <q-input
+                  filled
+                  type="tel"
+                  v-model="searchFrom.singerName"
+                  label="歌手名称"
+                />
 
-              <q-select filled
-                        clearable
-                        transition-show="flip-up"
-                        transition-hide="flip-down"
-                        v-model="searchFrom.singerType"
-                        label="歌手类型"
-                        lazy-rules
-                        emit-value
-                        map-options
-                        :options="singer_type_selection"></q-select>
+                <q-select filled
+                          clearable
+                          transition-show="flip-up"
+                          transition-hide="flip-down"
+                          v-model="searchFrom.singerType"
+                          label="歌手类型"
+                          lazy-rules
+                          emit-value
+                          map-options
+                          :options="singer_type_selection"></q-select>
 
-              <q-input v-model="searchFrom.createdTime" filled type="date" hint="开始时间"/>
-              <q-input v-model="searchFrom.specifyTime" filled type="date" hint="结束时间"
+                <q-input v-model="searchFrom.createdTime" filled type="date" hint="开始时间"/>
+                <q-input v-model="searchFrom.specifyTime" filled type="date" hint="结束时间"
 
-              />
-<!--              :rules="[value => value && value>=searchFrom.createdTime || '结束时间不能小于开始时间'] "-->
+                />
+                <!--              :rules="[value => value && value>=searchFrom.createdTime || '结束时间不能小于开始时间'] "-->
 
-              <div class="row justify-center">
-                <q-btn flat type="submit">搜索</q-btn>
-                <q-btn flat type="reset">重置</q-btn>
-              </div>
-            </q-card-section>
+                <q-btn-group>
+                  <q-btn label="搜索" type="submit" color="primary"/>
+                  <q-btn label="重置" type="reset" color="primary" flat/>
+                </q-btn-group>
+              </q-card-section>
             </q-btn-group>
           </q-form>
         </div>
@@ -145,9 +145,13 @@
                       <q-badge outline color="orange" :label="props.row.singerType"/>
                     </div>
                   </div>
+                  <template v-slot:error>
+                    <div class="absolute-full flex flex-center grey-5 text-white">
+                      <strong>{{ props.row.singerName }}</strong>
+                      <strong>{{ props.row.singerDetails }}</strong>
+                    </div>
+                  </template>
                 </q-img>
-
-                <br>
 
 
               </q-card-section>
@@ -183,8 +187,8 @@
 
     </div>
 
-    <CreateDialog ref="isOpenCreateDialog"/>
-    <UpdateDialog ref="isOpenUpdateDialog"/>
+    <CreateDialog ref="isOpenCreateDialog" @search="search"/>
+    <UpdateDialog ref="isOpenUpdateDialog" @search="search"/>
     <InfoDialog ref="isOpenInfoDialog"/>
   </div>
 </template>
@@ -220,6 +224,7 @@ const {
 
 const addRow = () => {
   isOpenCreateDialog.value.changeDialog()
+
 }
 const updateRow = (id) => {
 

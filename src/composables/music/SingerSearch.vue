@@ -1,34 +1,29 @@
 <template>
-  <div style="max-width: 300px">
+  <div style="min-width: 400px">
     <q-select filled bottom-slots
               use-input
-              multiple
+              :multiple="multiple"
               map-options
               counter
               use-chips
               clearable
-              label="选择歌手"
               new-value-mode="add"
               v-model="model"
+              @update:model-value="bindModel"
               @filter="filterFn"
               @add="add"
               @virtualScroll="scroll"
               :options="options"
               :dense="dense"
-              :rules="[value => value && value.length > 0 || '歌手不能为空']"
+              :rules="[rules]"
               :options-dense="denseOpts">
-      <template v-slot:before>
-        <q-avatar size="lg" rounded>
-          <img src="https://cdn.quasar.dev/img/avatar5.jpg">
-        </q-avatar>
-      </template>
+
       <template v-slot:hint>
-        歌手
       </template>
       <template v-slot:no-option>
         <q-item>
           <q-item-section class="text-grey">
-            没有查询到歌手
+            没有查询信息
           </q-item-section>
         </q-item>
       </template>
@@ -40,11 +35,16 @@
 
 <script>
 import {ref} from 'vue'
-import {list} from "src/api/singer";
-
+import {api} from "boot/axios"
 
 export default {
-  setup() {
+  name: "",
+  props: {
+    multiple: {type: Boolean, required: true, default: true},
+    rules: {type: Function, required: false, default: undefined},
+    url: {type: String, required: true, default: '/singer/list'},
+  },
+  setup(props) {
     const model = ref(undefined)
     const options = ref([
       {label: "goolog1", value: 1},
@@ -58,12 +58,19 @@ export default {
     const searchParam = {
       size: 10,
       page: 1,
-      singerName: undefined
+      singerName: undefined,
+      key: undefined
     }
     const getData = (searchParam) => {
-      list(searchParam).then(res => {
+      // list(searchParam)
+      api.get(props.url, {params: searchParam}).then(res => {
+        // FLEX 待修改
         res.data.records.forEach(item => {
-          options.value.push({label: item.singerName, value: item.id})
+          if (item.singerName) {
+            options.value.push({label: item.singerName, value: item.id})
+          } else {
+            options.value.push({label: item.albumName, value: item.id})
+          }
         })
       })
     }
@@ -87,6 +94,7 @@ export default {
           getData(searchParam)
         }
       },
+      // 得到字符串id列表
       getFinalValues() {
         if (model.value) {
           result.value = model.value.map(item => {
@@ -95,14 +103,22 @@ export default {
         }
         return result.value
       },
+      // 得到数组对象
+      getArrayObject(){
+        return model.value
+      },
       fillInData(data) {
-
         if (data) {
           model.value = []
           data.forEach(item => {
             this.model.push({label: item.singerName, value: item.id})
           })
         }
+      },
+      fileInDataPlus(data){
+        model.value = data;
+      },
+      bindModel(val) {
 
       }
 

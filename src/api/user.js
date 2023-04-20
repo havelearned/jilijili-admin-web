@@ -21,8 +21,8 @@ export const update = ( data) => {
   return api.put(`/users/`, data)
 }
 
-export const deleted = (id) => {
-  return api.delete(`/users/${id}`)
+export const deleted = (ids) => {
+  return api.delete(`/users/${ids}`)
 }
 
 export const userinfo = (id) => {

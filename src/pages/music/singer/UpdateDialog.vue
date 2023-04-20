@@ -129,12 +129,13 @@
 
 <script setup>
 
-import {ref} from "vue";
+import {defineEmits, ref} from "vue";
 import {singer_type_selection} from "src/utils/dictionary";
 import {singerInfo, updated} from "src/api/singer";
 import {useNotify} from "src/composables/useNotify";
 import {uploadLocalUrl} from "src/api/upload";
 
+const emit = defineEmits(['search'])
 let isOpen = ref(false);
 let btnLoading = ref(false)
 const bar = ref(null)
@@ -161,9 +162,7 @@ const onSubmit = () => {
   const barRef = bar.value
   barRef.start()
 
-  console.log("提交表单", singerData.value)
   updated(singerData.value).then(res => {
-    console.log(res)
     if (res.code === 200) {
       useNotify().infoNotify(res.message)
       isOpen.value = !isOpen.value
@@ -173,16 +172,15 @@ const onSubmit = () => {
     btnLoading.value = false
     barRef.stop()
   })
-
+  emit('search')
 }
 
 
 const changeDialog = (id) => {
-  console.log("歌手id==>",id)
-  singerInfo(id).then(res=>{
-    if(res.code===200){
+  singerInfo(id).then(res => {
+    if (res.code === 200) {
       singerData.value = res.data
-    }else{
+    } else {
       useNotify().negativeNotify("修改信息获取失败")
     }
   })

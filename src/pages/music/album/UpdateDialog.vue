@@ -14,7 +14,8 @@
       </q-card-section>
       <q-form @submit="onSubmit" @reset="onReset">
         <q-card-section>
-          <SingerSearch ref="getFinalValue"></SingerSearch>
+          <SingerSearch :url="url.selectSingerUrl" multiple :rules="requiredTest"
+                        ref="getFinalValue"></SingerSearch>
         </q-card-section>
         <q-card-section>
           <q-input
@@ -36,8 +37,9 @@
             label="专辑介绍"
           />
         </q-card-section>
-        <q-card-section>
+        <q-card-section class="q-gutter-md justify-lg-start">
           <q-uploader
+
             :url="uploadOssUrl"
             field-name="file"
             accept=".jpg, .png, .gif, ,.jpeg"
@@ -117,18 +119,22 @@
 </template>
 
 <script setup>
-
 import {queryByAlibumId, update} from "src/api/album"
 import {ref} from "vue";
 import {useNotify} from "src/composables/useNotify";
 import {uploadOssUrl} from "src/api/upload";
-import SingerSearch from "src/composables/music/singer/SingerSearch.vue";
+import SingerSearch from "src/composables/music/SingerSearch.vue";
+import {requiredTest} from "boot/inputTest";
 
+const emit = defineEmits(['search'])
 let isOpen = ref(false);
 let btnLoading = ref(false)
 const bar = ref(null)
 const loading = ref(false)
 const getFinalValue = ref(null)
+const url = ref({
+  selectSingerUrl: '/singer/list',
+})
 const albumData = ref({
   id: undefined,
   singerId: undefined, // 歌手id
@@ -149,10 +155,8 @@ const onSubmit = () => {
   btnLoading.value = true
   const barRef = bar.value
   barRef.start()
-  console.log("表单数据=>", albumData.value)
   albumData.value.singerId = getFinalValue.value.getFinalValues()
   update(albumData.value).then(res => {
-    console.log("修改返回的数据=", res)
     if (res.code === 200) {
       useNotify().infoNotify(res.message)
       isOpen.value = !isOpen.value
@@ -165,7 +169,7 @@ const onSubmit = () => {
     btnLoading.value = false
     barRef.stop()
   })
-
+  emit('search')
 }
 
 const onReset = () => {

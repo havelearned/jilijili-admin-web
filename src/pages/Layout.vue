@@ -88,9 +88,9 @@ export default {
         }).onOk(() => {
           store.dispatch("logout").then(() => window.location.reload())
         }).onCancel(() => {
-          console.log('>>>> Cancel')
+
         }).onDismiss(() => {
-          console.log('I am triggered on both OK and Cancel')
+
         })
 
       }

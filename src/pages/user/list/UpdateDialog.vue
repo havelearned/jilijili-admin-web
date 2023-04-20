@@ -89,15 +89,19 @@ import {update,deleted} from "src/api/user";
 import {useNotify} from "src/composables/useNotify";
 import {useDialog} from "src/composables/useDialog";
 
+
 const $q = useQuasar()
+
 const fixed = ref(true)
 const bar = ref(null)
 const props = defineProps({
   currentRow: {
     type: Object,
     default: {}
-  }
-})
+  },
+  fetchData:{
+    type:Function,
+    default:undefined}})
 const selectGender=["FEMALE","MALE","UNKNOWN","ALL"]
 const {negativeNotify,positiveNotify} = useNotify()
 const {confirmDialog} =useDialog()
@@ -133,22 +137,24 @@ const confirmDeleted = (id) =>{
         if(response.code === 200){
           positiveNotify(response.message)
           fixed.value=false
-          const emit = defineEmits(['refresh'])
-          emit('fetchData',0)
+
         }else{
           negativeNotify(response.message)
         }
 
       }).finally(()=>{
         bar.value.stop()
+        props.fetchData(0)
       })
 
     }else if(res===0){
       //取消
+
     }
 
-  })
 
+
+  })
 }
 
 const onReset = () => {

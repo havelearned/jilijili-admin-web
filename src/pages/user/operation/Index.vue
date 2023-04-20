@@ -110,8 +110,6 @@ const infoRow = (id) => {
 
 }
 const removeRow = (row) => {
-  console.log("row========>", row)
-
   useDialog().confirmDialog("确定删除吗?", row + '').then(r => {
     if (r) {
       console.log("确定删除")
@@ -194,8 +192,6 @@ const columns = [
 
 
 const selectGoodService = (array) => {
-  console.log("选择了=>", array)
-  console.log("选择了=>", selected.value)
 }
 const treeSelected = ref(null)
 const expanded = ref(['Admin'])

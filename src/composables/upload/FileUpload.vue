@@ -21,14 +21,14 @@
       :label="label"
       :max-files="maxFile"
       :accept="accept"
-      max-file-size="10000000"
-      max-total-size="50000000"
+      max-file-size="100000000"
+      max-total-size="500000000"
       v-model="model"
       :counter-label="counterLabel"
       :filter="checkFile"
       @update:model-value="updateModelValue"
       @rejected="onRejected"
-      :rules="[value => {value && value.length>0 || '文件不能为空'}]"
+      :rules="[fileRules]"
     >
       <template v-slot:prepend>
         <q-icon name="cloud_upload" @click.stop.prevent/>
@@ -63,7 +63,8 @@ export default {
     maxFile: {type: String, required: false, default: '5'},
     accept: {type: String, required: false, default: '.bmp, .gif , .jpg, .jpeg, .png, image/*'},
     label: {type: String, required: false, default: '文件上传'},
-    auto: {type: Boolean, required: false, default: false}
+    auto: {type: Boolean, required: false, default: false},
+    verify: {type: Boolean, required: false, default: true},
   },
   setup(props) {
     const model = ref(null)
@@ -73,32 +74,33 @@ export default {
     const executeUploadFile = () => {
       loading.value = true
       return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // 创建文件上传对象
-          let formData = new FormData();
-          model.value.forEach(file => {
-            formData.append("files", file, file.name)
-          })
-          uploadLocal(formData).then(res => {
-            console.log("文件上传返回的数据=>", res)
-            if (res.code === 200) {
-              result.value = res.data
-              resolve()
-              useNotify().infoNotify(`上传成功`)
-            } else {
-              useNotify().negativeNotify(`上传失败`)
-              result.value = undefined
-              reject()
-            }
-          })
-          loading.value = false
-        }, 2000)
+        // 创建文件上传对象
+        let formData = new FormData();
+        model.value.forEach(file => {
+          formData.append("files", file, file.name)
+        })
+        uploadLocal(formData).then(res => {
+          if (res.code === 200) {
+            result.value = res.data
+            resolve(result.value)
+            loading.value = false
+            console.log("文件url=>", res.data)
+            useNotify().infoNotify(`上传成功`)
+          } else {
+            loading.value = false
+            useNotify().negativeNotify(`上传失败`)
+            result.value = undefined
+            reject()
+          }
+        })
+
       })
     }
 
-    // 得到文件URL
+    // 得到文件URL,返回rul列表数组
     const getPublicNetworkAccessUrl = () => {
-      return result.value
+      return result.value;
+
     }
     return {
       model, result, loading,
@@ -108,7 +110,7 @@ export default {
       },
       // 文件校验
       fileRules(file) {
-        return false
+        return true
       },
       // 拒绝的条目
       onRejected(rejectedEntries) {
@@ -136,18 +138,21 @@ export default {
       // 文件过滤,在用户选择后
       checkFile(files) {
         return files.filter(file => {
-          console.log(file)
           return true
         })
       },
       // 更新文件时调用
       updateModelValue(value) {
+        console.log(model.value)
         if (props.auto) {
-          executeUploadFile().then(res => {
-            console.log("获得url=>", getPublicNetworkAccessUrl());
-          })
+          executeUploadFile()
         }
       },
+      setMode(value){
+        model.value = []
+        model.value.push(value);
+      }
+
     }
   }
 }

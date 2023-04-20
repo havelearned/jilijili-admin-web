@@ -63,13 +63,13 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {ref,defineEmits} from "vue";
 import {add} from 'src/api/user.js'
 import {useQuasar} from "quasar";
 import {useNotify} from "src/composables/useNotify";
 
 const $q = useQuasar()
-
+const emit = defineEmits(['fetchData'])
 const fixed = ref(true)
 const bar = ref(null)
 
@@ -82,7 +82,6 @@ const {negativeNotify,positiveNotify} = useNotify()
 
 const onSubmit = () => {
   bar.value.start()
-
   // 添加用户
   add(JSON.stringify(userInfo.value)).then(response => {
 
@@ -95,7 +94,9 @@ const onSubmit = () => {
 
   }).finally(()=>{
     bar.value.stop()
+    emit('fetchData')
   })
+
 }
 
 const onReset = () => {

@@ -2,7 +2,6 @@
   <div class="page">
 
 
-
     <q-card>
       <div class="welcome-piece">
         <div class="welcome-float q-pa-md q-gutter-sm">
@@ -68,7 +67,7 @@
               class="text-white rounded-borders"
               style="background: rgba(0, 0, 0, .3); padding: 4px 8px;"
             >
-              <q-toggle dense dark color="orange" v-model="autoplay" label="Auto Play" />
+              <q-toggle dense dark color="orange" v-model="autoplay" label="Auto Play"/>
             </q-carousel-control>
 
             <q-carousel-control
@@ -95,6 +94,12 @@
         </template>
       </q-carousel>
     </div>
+
+    <q-page class="cc-admin row">
+      <div class="col bg-white shadow-2 q-pa-md q-ma-sm">
+
+      </div>
+    </q-page>
 
     <!-- 总流量-->
     <q-card class="summary-box row">
@@ -229,6 +234,8 @@
 </template>
 
 <script setup>
+
+
 import {useStore} from "vuex";
 import {computed, onMounted, onUnmounted, ref} from "vue";
 import * as echarts from "echarts";
@@ -263,7 +270,7 @@ onUnmounted(() => {
 <style scoped lang="less">
 @import "src/css/dashboard.less";
 
-.custom-caption{
+.custom-caption {
   text-align: center;
   padding: 12px;
   color: white;

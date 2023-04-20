@@ -25,7 +25,6 @@ import {ref} from "vue";
 let isOpen = ref(false);
 const changeDialog = (id) => {
   isOpen.value = !isOpen.value;
-  console.log("父亲传过来的的id=>",id)
 }
 defineExpose({
   changeDialog

@@ -17,13 +17,13 @@ export const useSingerData = () => {
   });
   const tableDate = ref([
     {
-      id: 1, //  歌手id
-      singerName: 1, // 歌手名称
-      singerDetails: 1, // 歌手信息
-      singerPhoto: 1, // 歌手头像
-      singerType: 1, // 歌手类型
-      createdTime: 1, // 创建时间
-      specifyTime: 1, // 匹配时间
+      id: undefined, //  歌手id
+      singerName: undefined, // 歌手名称
+      singerDetails: undefined, // 歌手信息
+      singerPhoto: undefined, // 歌手头像
+      singerType: undefined, // 歌手类型
+      createdTime: undefined, // 创建时间
+      specifyTime: undefined, // 匹配时间
     },
   ])
 
@@ -46,9 +46,7 @@ export const useSingerData = () => {
   const fetchData = (current) => {
     searchFrom.value.page = current
     list(searchFrom.value).then(res => {
-      console.log("歌手数据=>", res)
       if (res.code === 200) {
-
         tableDate.value = res.data.records
         pagination.value.rowsPerPage = res.data.size
         pagination.value.rowsNumber = res.data.total
@@ -64,13 +62,10 @@ export const useSingerData = () => {
 
 
   const search = () => {
-    console.log("搜索表单数据=>", searchFrom.value)
-
     fetchData(searchFrom.value.page)
 
   }
   const searchReset = () => {
-    console.log("重置")
     searchFrom.value.createdTime = undefined
     searchFrom.value.specifyTime = undefined
     searchFrom.value.singerName = undefined
@@ -93,7 +88,6 @@ export const useSingerData = () => {
 
 
       } else {
-        console.log("取消删除")
       }
     })
   }

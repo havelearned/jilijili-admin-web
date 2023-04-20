@@ -135,7 +135,9 @@ import {singer_type_selection} from "src/utils/dictionary";
 import {addSinger} from "src/api/singer";
 import {useNotify} from "src/composables/useNotify";
 import {uploadOssUrl} from "src/api/upload";
+import {defineEmits} from 'vue'
 
+const emit = defineEmits(['search'])
 let isOpen = ref(false);
 let btnLoading = ref(false)
 const bar = ref(null)
@@ -161,9 +163,7 @@ const onSubmit = () => {
   const barRef = bar.value
   barRef.start()
 
-  console.log("提交表单", singerData.value)
   addSinger(singerData.value).then(res => {
-    console.log(res)
     if (res.code === 200) {
       useNotify().infoNotify(res.message)
       isOpen.value = !isOpen.value
@@ -174,10 +174,12 @@ const onSubmit = () => {
     barRef.stop()
   })
 
+  emit('search')
+
+
 }
 
 const onReset = () => {
-  console.log("重置表单")
   singerData.value.singerName = undefined
   singerData.value.singerType = undefined
   singerData.value.singerDetails = undefined

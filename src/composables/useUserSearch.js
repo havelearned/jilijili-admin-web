@@ -1,5 +1,5 @@
 import {computed, onMounted, ref} from "vue";
-import {search} from "src/api/user.js";
+import {deleted, search} from "src/api/user.js";
 import {useNotify} from "src/composables/useNotify";
 import {useDialog} from "src/composables/useDialog";
 
@@ -15,13 +15,13 @@ export const useUserSearch = () => {
   const searchFrom = ref({
     page: 0,
     size: 10,
-    id: '',
-    createdTime: '',
-    specifyTime: '',
-    nickname: '',
-    username: '',
+    id: undefined,
+    createdTime: undefined,
+    specifyTime: undefined,
+    nickname: undefined,
+    username: undefined,
     unseal: 1,
-    gender: 'MALE'
+    gender: undefined
   })
 
   // 分页信息
@@ -83,15 +83,24 @@ export const useUserSearch = () => {
     let count = selected.value.length;
     if (count === 0) return
     let message = "";
-    selected.value.forEach(item => {
-      message += "<" + item.username + ">\n"
-    })
     message += "这" + count + "项数据吗?"
     useDialog().confirmDialog("确定删除吗?", message).then(r => {
       if (r === 1) {
-        // TODO 删除并且重新发送请求
+        let ids = ''
+        selected.value.forEach(item => {
+          ids += item.id + ","
+        })
+        deleted(ids).then(res => {
+          if (res.code === 200) {
+            useNotify().infoNotify(res.message)
+          } else {
+            useNotify().negativeNotify(res.message)
+          }
+        })
       }
+      fetchData(1)
     })
+
   }
 
 

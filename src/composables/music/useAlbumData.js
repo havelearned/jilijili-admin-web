@@ -45,7 +45,6 @@ export const useAlbumData = () => {
   const fetchData = (current) => {
     searchFrom.value.page = current
     list(searchFrom.value).then(res => {
-      console.log("专辑数据==>", res)
       if (res.code === 200) {
         tableDate.value = res.data.records
         pagination.value.rowsPerPage = res.data.size
@@ -78,7 +77,6 @@ export const useAlbumData = () => {
   const delRow = (row) => {
     useDialog().confirmDialog(`确定删除吗?`, `${row.albumName}`).then(r => {
       if (r) {
-
         deleted(row.id + '').then(res => {
           if (res.code === 200) {
             useNotify().infoNotify(res.message)
@@ -90,6 +88,7 @@ export const useAlbumData = () => {
         console.log("取消删除")
       }
     })
+    search()
   }
 
   // 删除全部

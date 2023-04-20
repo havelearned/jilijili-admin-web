@@ -34,17 +34,18 @@
     </div>
     <q-table
       grid
+      row-key="id"
+      class="q-pa-md-sm"
+      selection="multiple"
+      hide-pagination
+      virtual-scroll
+      binary-state-sort
       :filter="filter"
       :rows="tableDate"
       :columns="columns"
-      binary-state-sort
-      class="q-pa-md-sm"
-      selection="multiple"
-      v-model:selected="selected"
-      hide-pagination
-      v-model:pagination="pagination"
       :loading="loading"
-      virtual-scroll
+      v-model:selected="selected"
+      v-model:pagination="pagination"
     >
       <template v-slot:top>
         <div class="q-gutter-md row">
@@ -79,10 +80,10 @@
                 <q-input v-model="searchFrom.specifyTime" filled type="date" hint="结束时间"/>
                 <!--              :rules="[value => value && value>=searchFrom.createdTime || '结束时间不能小于开始时间'] "-->
 
-                <div class="row justify-center">
-                  <q-btn color="primary" flat type="submit">搜索</q-btn>
-                  <q-btn color="grey" flat type="reset">重置</q-btn>
-                </div>
+                <q-btn-group >
+                  <q-btn label="搜索" type="submit" color="primary"/>
+                  <q-btn label="重置" type="reset" color="primary" flat/>
+                </q-btn-group>
               </q-card-section>
 
             </q-btn-group>
@@ -167,8 +168,8 @@
 
     </div>
 
-    <CreateDialog ref="isOpenCreateDialog"/>
-    <UpdateDialog ref="isOpenUpdateDialog"/>
+    <CreateDialog ref="isOpenCreateDialog" @search="search"/>
+    <UpdateDialog ref="isOpenUpdateDialog"  @search="search"/>
     <InfoDialog ref="isOpenInfoDialog"/>
   </div>
 </template>

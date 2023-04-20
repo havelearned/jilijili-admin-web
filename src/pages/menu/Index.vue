@@ -1,6 +1,13 @@
 <template>
   <div class="page">
-    <q-list bordered class="rounded-borders">
+    <q-card class="my-card " flat>
+      <q-card-section>
+        <q-card-section class="card-section-content">
+          <q-img  fit="scale-down" src="/images/logo-lg.png" />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-list bordered class="rounded-borders" dense padding>
       <q-expansion-item
         group="semigroup"
         v-for="(menu,index) in menus" :key="index" :to="menu.meta.path">
@@ -21,6 +28,7 @@
           :key="index"
           :to="item.meta.path"
           :header-inset-level="1"
+          hide-expand-icon
           expand-separator
         >
           <template v-slot:header>
@@ -32,13 +40,11 @@
             </q-item-section>
           </template>
         </q-expansion-item>
-
-
-          <q-card v-else>
-            <q-card-section>
-              {{menu.meta.title}}
-            </q-card-section>
-          </q-card>
+        <q-card v-else>
+          <q-card-section>
+            {{ menu.meta.title }}
+          </q-card-section>
+        </q-card>
         <q-separator/>
       </q-expansion-item>
 
@@ -75,6 +81,13 @@ export default {
   width: 100%;
   height: 100%;
   //background-color: #9C27B0;
+
+  .card-section-content {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+  }
 }
 
 

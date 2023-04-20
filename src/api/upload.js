@@ -5,10 +5,11 @@ export const uploadOssUrl = `${baseURL}/upload/oss/image`;
 export const uploadLocalUrl = `${baseURL}/upload/local/image`;
 
 export const multipleUploadLocalUrl = `${baseURL}/upload/multiple/local/image`;
+export const multipleUploadOssUrl = `${baseURL}/upload/multiple/oss/image`;
 
 
 export const uploadLocal = (fileData) => {
-  return api.post(multipleUploadLocalUrl, fileData,{
+  return api.post(multipleUploadOssUrl, fileData,{
     headers:{
       "Content-Type":"multipart/form-data"
     }

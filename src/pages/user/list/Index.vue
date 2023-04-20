@@ -38,40 +38,45 @@
           hide-pagination
           v-model:pagination="pagination"
         >
-
           <template v-slot:top="props">
-            <q-btn color="primary" :disable="loading" label="添加" @click="createToggleDialog.toggleDialog()"/>
-            <q-btn class="q-ml-sm" color="deep-orange" :disable="loading" label="删除" @click="delUsers"/>
-            <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="修改">
-              <q-tooltip anchor="top middle" self="top start">
-                双击条目即可修改
-              </q-tooltip>
-            </q-btn>
-            <q-space/>
-            <q-form
-              @submit="fetchData(pagination.page)" @reset="onReset" class="q-gutter justify-center">
-              <q-item class="row-lg q-gutter-md">
-                <q-icon name="jilijili:exclamation" style="width: 32px;height: 32px;">
-                  <q-tooltip anchor="top middle" self="center middle">
-                    用户名称,昵称搜索,自动删除前后空格
+            <div class="row no-wrap full-width">
+              <div class="q-gutter-xs">
+                <q-btn color="primary" :disable="loading" label="添加" @click="createToggleDialog.toggleDialog()"/>
+                <q-btn class="q-ml-sm" color="deep-orange" :disable="loading" label="删除" @click="delUsers(selected)"/>
+                <q-btn class="q-ml-sm" color="secondary" :disable="loading" label="修改">
+                  <q-tooltip anchor="top middle" self="top start">
+                    双击条目即可修改
                   </q-tooltip>
-                </q-icon>
-                <q-input filled label="id" lazy-rules v-model="searchFrom.id"/>
-                <q-input filled label="用户名称" lazy-rules v-model="searchFrom.username"/>
+                </q-btn>
+              </div>
+              <q-space/>
+                <q-form @submit="fetchData(pagination.page)" @reset="onReset" class="q-gutter justify-center">
+                  <div class="q-gutter-xs">
+                  <q-item class="row-lg q-gutter-md">
+                    <q-icon name="jilijili:exclamation" style="width: 32px;height: 32px;">
+                      <q-tooltip anchor="top middle" self="center middle">
 
-                <q-input filled label="昵称" lazy-rules v-model="searchFrom.nickname"/>
-                <q-select filled v-model="searchFrom.gender" :options="options" label="性别"/>
-                <!--                <q-input filled type="date" hint="开始时间" v-model="searchFrom.createdTime"/>-->
-                <!--                <q-input filled type="date" hint="结束时间" v-model="searchFrom.specifyTime"/>-->
+                      </q-tooltip>
+                    </q-icon>
+                    <q-input filled label="id" lazy-rules v-model="searchFrom.id"/>
+                    <q-input filled label="用户名称" lazy-rules v-model="searchFrom.username"/>
+
+                    <q-input filled label="昵称" lazy-rules v-model="searchFrom.nickname"/>
+                    <q-select filled v-model="searchFrom.gender" :options="options" label="性别"/>
+                    <!--                <q-input filled type="date" hint="开始时间" v-model="searchFrom.createdTime"/>-->
+                    <!--                <q-input filled type="date" hint="结束时间" v-model="searchFrom.specifyTime"/>-->
 
 
-                <div class="q-mt-md content-center">
-                  <q-btn label="搜索" type="submit" color="primary"/>
-                  <q-btn label="重置" type="reset" color="primary" flat/>
-                </div>
-              </q-item>
-            </q-form>
+                    <q-btn-group>
+                      <q-btn label="搜索" type="submit" color="primary"/>
+                      <q-btn label="重置" type="reset" color="primary" flat/>
+                    </q-btn-group>
 
+                  </q-item>
+                  </div>
+                </q-form>
+
+            </div>
           </template>
 
           <template v-slot:top-right>
@@ -106,8 +111,13 @@
 
     </div>
   </div>
-  <create-dialog v-if="showDialog" @hide="createToggleDialog.toggleDialog()"/>
-  <update-dialog v-if="updateDialogFlag" @hide="updateToggleDialog.toggleDialog()" :currentRow="currentRow"/>
+  <create-dialog v-if="showDialog"
+                 @fetchData="fetchData"
+                 @hide="createToggleDialog.toggleDialog()"/>
+  <update-dialog v-if="updateDialogFlag"
+                 @fetchData="fetchData"
+                 @hide="updateToggleDialog.toggleDialog()"
+                 :currentRow="currentRow"/>
 </template>
 
 <script setup>
@@ -122,7 +132,6 @@ const showDialog = ref(false);
 const {
   selected,
   loading, // 加载状态
-  scrollTargetRef, // 不知道
   tableData, // 表单数据
   filter, // 搜索筛选数据
   pagination,
