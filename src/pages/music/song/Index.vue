@@ -9,7 +9,7 @@
         :columns="columns"
         :rows="list"
         row-key="id"
-        :pagination="pagination"
+        v-model:pagination="pagination"
         :visible-columns="group"
         @request="query"
         :rows-per-page-options="[10,20,50,100]"
@@ -122,8 +122,16 @@
         </template>
         <template #body-cell-musicFilepath="props">
           <q-td :props="props">
-            <div>{{ ellipsis(props.row.musicFilepath, 20) }}</div>
-            <q-btn>试听</q-btn>
+<!--            <div>{{ ellipsis(props.row.musicFilepath, 20) }}</div>-->
+            <figure>
+              <audio
+                controls
+                :src="props.row.musicFilepath">
+                <a :href="props.row.musicFilepath">
+                  Download audio
+                </a>
+              </audio>
+            </figure>
           </q-td>
         </template>
         <template #body-cell-createdTime="props">
@@ -257,16 +265,6 @@ export default {
           name: 'opt', align: 'center', label: '操作', field: 'opt',
         },
       ],
-      audio: [
-        {
-          name: '东西（Cover：林俊呈）',
-          artist: '纳豆',
-          url: 'https://cdn.moefe.org/music/mp3/thing.mp3',
-          cover: 'https://p1.music.126.net/5zs7IvmLv7KahY3BFzUmrg==/109951163635241613.jpg?param=300y300', // prettier-ignore
-          lrc: 'https://cdn.moefe.org/music/lrc/thing.lrc',
-        },
-      ],
-
       showQuery: true,
       musicStatus: [{value: 2, label: '上架'}, {value: 0, label: '下架'}, {value: 1, label: '草稿'}],
       headers: [{name: 'Authorization', value: localStorage.Authorization}],

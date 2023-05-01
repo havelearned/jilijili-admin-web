@@ -239,8 +239,7 @@ const infoRow = (id) => {
 
 
 const checkSingerInfo = (id) => {
-  alert("歌手信息")
-
+  infoRow(id)
 }
 const filter = ref('')
 const selected = ref([])

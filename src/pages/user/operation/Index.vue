@@ -31,7 +31,7 @@
           class="q-pa-md-sm"
           selection="multiple"
           v-model:selected="selected"
-          :pagination="initialPagination"
+          v-model:pagination="initialPagination"
           :loading="loading"
           virtual-scroll
         >

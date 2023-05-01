@@ -49,8 +49,8 @@ export const IndexMixin = {
         return false;
       }
       if (props && props.pagination) {
+        console.log("props.pagination===>",props.pagination)
         this.pagination = props.pagination;
-        this.pagination.page++;
       }
       this.loading = true;
       return api.get(this.url.list, {
@@ -120,6 +120,11 @@ export const IndexMixin = {
         return `${value.slice(0, vlength)}...`;
       }
       return value;
+    },
+    byteToMegaByte(value){
+      value = value/1024
+      value = value/1024
+      return value.toFixed(2)+" mb"
     },
     add() {
       this.editType = '新建';

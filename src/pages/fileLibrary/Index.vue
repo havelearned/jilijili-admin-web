@@ -1,172 +1,210 @@
 <template>
-  <div class="q-pa-md">
+  <q-page class="cc-admin row">
+    <tree
+      class="q-mt-sm q-mb-sm q-ml-sm"
+      style="width:200px;"
+      type="SysDepart"
+      @select="selectCatalog"
+    />
+    <div class="col bg-white shadow-2 q-pa-md q-ma-sm">
+      <q-table
+        flat
+        color="primary"
+        class="cross_table"
+        separator="cell"
+        :columns="columns"
+        :rows="list"
+        row-key="id"
+        v-model:pagination="pagination"
+        :visible-columns="group"
+        @request="query"
+        :rows-per-page-options="[10,20,50,100]"
+        :loading="loading"
+        selection="multiple"
+        v-model:selected="selected"
+      >
+        <template v-slot:top="table">
+          <div class="row no-wrap full-width">
+            <q-input
+              clearable
+              outlined
+              dense
+              placeholder="请输入关键字搜索"
+              class="on-left"
+              @input="query"
+              debounce="500"
+              v-model="key"
+            >
+              <template #append>
+                <q-btn flat round icon="search" color="primary" @click="query" :loading="loading">
+                  <q-tooltip>搜索</q-tooltip>
+                </q-btn>
+              </template>
+            </q-input>
+            <q-space/>
+            <div class="q-gutter-xs">
+              <q-btn icon="add" no-wrap color="primary" label="新建" @click="add"/>
+              <!--              <q-btn
+                              no-wrap
+                              v-show="$q.screen.gt.sm"
+                              label="导入"
+                              icon="mdi-cloud-upload-outline"
+                              :loading="importing"
+                              color="primary"
+                              @click="importExcel"
+                            >
+                              <q-uploader
+                                auto-upload
+                                ref="excelUploader"
+                                :max-files="1"
+                                class="hidden"
+                                :url="importExcelUrlFull"
+                                field-name="file"
+                                :headers="headers"
+                                @uploaded="importedExcel"
+                              />
+                            </q-btn>
+                            <q-btn
+                              no-wrap
+                              v-show="$q.screen.gt.sm"
+                              :loading="exporting"
+                              label="导出"
+                              icon="mdi-cloud-download-outline"
+                              color="primary"
+                              @click="exportExcel('音乐文件')"
+                            />-->
+              <q-btn
+                :disable="selected.length === 0"
+                no-wrap
+                v-show="$q.screen.gt.md"
+                color="negative"
+                label="批量删除"
+                @click="showConfirm()"
+                icon="mdi-delete-variant"
+              />
+              <q-btn
+                color="primary"
+                label="切换全屏"
+                no-wrap
+                v-show="$q.screen.gt.md"
+                @click="table.toggleFullscreen"
+                :icon="table.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+              />
+              <q-btn-dropdown
+                color="primary"
+                label="自选列"
+                icon="view_list"
+                no-wrap
+                v-show="$q.screen.gt.md"
+              >
+                <q-list>
+                  <q-item tag="label" v-for="item in columns" :key="item.name">
+                    <q-item-section avatar>
+                      <q-checkbox v-model="group" :val="item.name"/>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ item.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
+          </div>
+        </template>
 
-    <q-table
-      :filter="filter"
-      :rows="tableDate"
-      :columns="columns"
-      row-key="id"
-      binary-state-sort
-      class="q-pa-md-sm"
-      selection="multiple"
-      v-model:selected="selected"
-      :pagination="initialPagination"
-      :loading="loading"
-      virtual-scroll
-    >
+        <template #body-cell-filepath="props">
+          <q-td :props="props" :auto-width="true">
+            <div>{{ ellipsis(props.row.filepath, 20) }}</div>
+          </q-td>
+        </template>
+        <template #body-cell-filesize="props">
+          <q-td :props="props" :auto-width="true">
+            <div>{{ byteToMegaByte(props.row.filesize) }}</div>
+          </q-td>
+        </template>
+        <template #body-cell-locked="props">
+          <q-td :props="props" :auto-width="true">
+            <q-btn-toggle
+              v-model="props.row.locked"
+              push
+              glossy
+              toggle-color="primary"
+              :options="[{label: '可用', value: 0},{label: '不可用', value: 1},]"
+            />
+          </q-td>
+        </template>
+        <template #body-cell-opt="props">
+          <q-td :props="props" :auto-width="true">
+            <q-btn flat round dense color="primary" icon="edit" @click="editBefored(props.row)">
+              <q-tooltip>编辑</q-tooltip>
+            </q-btn>
+            <btn-del :label="props.row.filename" @confirm="deleted(props.row)"/>
+          </q-td>
+        </template>
 
 
-      <template v-slot:top="props">
-        <div class="q-gutter-md">
-          <q-btn color="primary" :disable="loading" label="添加角色" @click="addRow"/>
-          <q-btn class="q-ml-sm" color="primary" :disable="loading" label="删除" @click="removeRow(selected)"/>
-          <q-checkbox size="xl" keep-color v-model="selectedAll" label="全选" color="teal" @click="checkAll"/>
-        </div>
-        <q-space/>
-        <q-input borderless dense debounce="300" color="primary" v-model="filter">
-          <template v-slot:append>
-            <q-icon name="search"/>
-          </template>
-        </q-input>
-      </template>
+      </q-table>
+    </div>
 
-      <template v-slot:item="props">
-        <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
-        >
-          <q-card class="my-card">
-            <q-img src="https://cdn.quasar.dev/img/parallax2.jpg">
-              <div class="absolute-bottom">
-                <strong>专辑名字:{{ props.row.singerName }}</strong><br>
-                <strong>歌手:{{ props.row.singerType }}</strong><br>
-                专辑简介: {{ props.row.singerDetails }}<br>
-              </div>
-            </q-img>
+  </q-page>
 
-            <q-card-actions class="justify-center">
-              <q-btn-group outline>
-                <q-btn outline color="brown" label="修改" @click="updateRow(props.row.id)"/>
-                <q-btn outline color="brown" label="删除" @click="removeRow(props.row)"/>
-                <q-btn color="brown" label="专辑信息" @click="infoRow(props.row.id)"/>
-                <q-checkbox style="margin-left: 20px" size="xl" color="brown" dense v-model="props.selected"
-                            label="选中"/>
-              </q-btn-group>
-            </q-card-actions>
-          </q-card>
-          <q-card :class="props.selected ? 'bg-grey-2' : ''">
-            <q-separator/>
-
-          </q-card>
-        </div>
-      </template>
-
-    </q-table>
-    <CreateDialog ref="isOpenCreateDialog"/>
-    <UpdateDialog ref="isOpenUpdateDialog"/>
-  </div>
 </template>
 
-<script setup>
-import {ref} from 'vue'
-import CreateDialog from "./CreateDialog.vue";
-import UpdateDialog from "./UpdateDialog.vue";
-import {useDialog} from "src/composables/useDialog";
+<script>
+import {IndexMixin} from "boot/mixins";
+import BtnDel from "src/composables/btndel.vue";
+import tree from "pages/fileLibrary/tree.vue";
 
-const isOpenCreateDialog = ref(null)
-const isOpenUpdateDialog = ref(null)
-const addRow = () => {
-  isOpenCreateDialog.value.changeDialog()
-}
-const updateRow = (id) => {
-  isOpenUpdateDialog.value.changeDialog(id);
-}
+export default {
+  mixins: [IndexMixin],
+  components: {
+    BtnDel,
+    tree
 
-const infoRow = (id) => {
-
-}
-const removeRow = (row) => {
-  console.log("row========>", row)
-  // TODO[1] 删除歌手操作
-  useDialog().confirmDialog("确定删除吗?", row + '').then(r => {
-    if (r) {
-      console.log("确定删除")
-    } else {
-      console.log("取消删除")
+  },
+  data() {
+    return {
+      columns: [
+        {name: 'index', align: 'center', label: '序号', field: 'index',},
+        {name: 'filename', align: 'center', label: '文件名称', field: 'filename',},
+        {name: 'filepath', align: 'center', label: '源文件', field: 'filepath',},
+        {name: 'type', align: 'center', label: '文件类型', field: 'type',},
+        {name: 'filesize', align: 'center', label: '大小', field: 'filesize',},
+        {name: 'locked', align: 'center', label: '是否可用', field: 'locked',},
+        // {name: 'accessTime', align: 'center', label: '访问时间', field: 'accessTime',},
+        {name: 'createdTime', align: 'center', label: '创建时间', field: 'createdTime',},
+        {name: 'opt', align: 'center', label: '操作', field: 'opt',},
+      ],
+      url: {
+        list: '/fileManage/list',
+        add: '/fileManage/',
+        edit: '/fileManage/',
+        delete: '/fileManage/idList',
+        deleteBatch: '/fileManage/idList',
+        exportXlsUrl: '/sys/news/exportXls',
+        importExcelUrl: '/sys/news/importExcel',
+      },
     }
-  })
-}
+  },
+  methods: {
+    initDict(){
+      this.localApi.get()
 
-const checkAll = () => {
+    },
+    selectCatalog(n) {
+      // this.form = { ...n };
+      // this.form = {}
+      this.searchForm.type = n.label;
+      this.query(null);
 
+      //
+      // this.lock();
+    },
+  },
+  mounted() {
+    this.initDict();
+  }
 }
-
-const tableDate = ref([
-  {
-    id: 1, //  歌手id
-    name: 1, // 歌手名称
-    description: 1, // 歌手信息
-    status: 1, // 歌手头像
-    musicFilepath: 1, // 歌手类型
-    createdTime: 1, // 创建时间c
-    albumId: undefined, // 专辑id,
-    singerId: undefined //  歌手id
-  },
-])
-for (let i = 2; i < 12; i++) {
-  let newItem = {
-    id: 1, //  歌手id
-    name: 1, // 歌手名称
-    description: 1, // 歌手信息
-    status: 1, // 歌手头像
-    musicFilepath: 1, // 歌手类型
-    createdTime: 1, // 创建时间
-  };
-
-  tableDate.value.push(newItem)
-}
-const filter = ref('')
-const selected = ref([])
-const selectedAll = ref(true);
-const loading = ref(false)
-const initialPagination = {
-  sortBy: 'desc',
-  descending: false,
-  page: 1,
-  rowsPerPage: 8
-  // rowsNumber: xx if getting data from a server
-}
-const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: '歌手Id',
-    align: 'center',
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'name', align: 'center', label: '歌曲名称', field: row => row.name,
-    format: val => `${val}`, sortable: true
-  },
-  {
-    name: 'description', align: 'center', label: '歌词', field: row => row.description,
-    format: val => `${val}`, sortable: true
-  },
-  {
-    name: 'status', align: 'center', label: '状态', field: row => row.status,
-    format: val => `${val}`, sortable: true
-  },
-  {
-    name: 'musicFilepath', align: 'center', label: '歌曲源文件', field: row => row.musicFilepath,
-    format: val => `${val}`, sortable: true
-  },
-  {
-    name: 'createdTime', align: 'center', label: '创建时间', field: row => row.createdTime,
-    format: val => `${val}`, sortable: true
-  },
-]
 
 
 </script>

@@ -10,6 +10,7 @@ export default createStore({
     menuRoutes,
     sysConfig,
     user,
+
   },
   // plugins: debug ? [createLogger()] : []
 })
