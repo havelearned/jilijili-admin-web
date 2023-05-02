@@ -188,7 +188,6 @@ export default {
   },
   methods: {
     initDict(){
-      this.localApi.get()
 
     },
     selectCatalog(n) {

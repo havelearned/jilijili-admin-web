@@ -211,6 +211,7 @@ export const IndexMixin = {
     },
     submit() {
       let q;
+      console.log("提交的表单=>",this.form.musicFilepath)
       if (this.editType === '新建') {
         q = api.post(this.url.add, this.form);
       } else {

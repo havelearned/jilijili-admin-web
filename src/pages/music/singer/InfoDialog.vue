@@ -52,8 +52,12 @@ import {api} from "boot/axios";
 import {useNotify} from "src/composables/useNotify";
 import {useQuasar} from 'quasar'
 
+
 export default {
   mixins: [IndexMixin],
+  components:{
+    MarkdownItVueLight
+  },
   data() {
     return {
       test: "sdfasdfsadf",

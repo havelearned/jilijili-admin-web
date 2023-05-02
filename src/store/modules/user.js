@@ -18,9 +18,10 @@ const getters = {
 };
 // 使用 store.dispatch调用
 const actions = {
-  login({commit}, {username, password}) {
+  login({commit}, {username, password,checkKey,captcha}) {
+
     return new Promise((resolve, reject) => {
-      create(username, password).then(response => {
+      create(username, password,checkKey,captcha).then(response => {
         if (response.code !== 200) {
           Notify.create({
             type: 'negative',

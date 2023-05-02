@@ -81,6 +81,7 @@ function handleErrorMessages(error) {
 
 export default boot(({app, Vue}) => {
   app.config.globalProperties.$axios = axios
+
   app.config.globalProperties.$api = api
 })
 

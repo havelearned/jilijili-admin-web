@@ -94,8 +94,8 @@ const menuRoutes = [
           },
           {
             path: 'serverSetting',
-            name: "服务器设置",
-            meta: {title: "服务器设置", icon: "jilijili:system", path: "/system/serverSetting"},
+            name: "系统设置",
+            meta: {title: "系统设置", icon: "jilijili:system", path: "/system/serverSetting"},
             component: () => import('pages/system/serverSetting/Index.vue'),
           }
         ]

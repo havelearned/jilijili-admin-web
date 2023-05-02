@@ -1,12 +1,12 @@
 <template>
   <q-layout view="hHh lpR fFf">
-
-    <q-header elevated class="bg-primary text-white">
+    <q-header class="bg-primary text-white">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
         <q-toolbar-title>
           肌理音乐后台
         </q-toolbar-title>
+        <q-space/>
         <q-avatar color="teal" text-color="white">
           {{ nicknameFastWord }}
           <q-menu fit anchor="bottom middle"
@@ -27,15 +27,26 @@
       </q-toolbar>
 
     </q-header>
-
-    <div class="fixed" style="height: 100%;">
-      <q-drawer show-if-above
-                v-model="leftDrawerOpen"
-                side="left"
-                bordered>
-        <menus></menus>
-      </q-drawer>
-    </div>
+    <q-drawer
+      show-if-above
+      elevated
+      v-model="leftDrawerOpen"
+      side="left"
+      :width="210"
+      content-class="column"
+      class="drawer-menu gt-md"
+      bordered>
+      <q-card class="my-card " flat>
+        <q-card-section>
+          <q-card-section class="card-section-content">
+            <q-img  fit="scale-down" src="/images/logo-lg.png" />
+            <q-tooltip anchor="center right" self="center left">欢迎使用</q-tooltip>
+          </q-card-section>
+        </q-card-section>
+      </q-card>
+      <q-separator/>
+      <menus></menus>
+    </q-drawer>
 
 
     <q-page-container>

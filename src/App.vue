@@ -1,5 +1,9 @@
 <template>
-  <router-view />
+  <div class="point">
+    <q-ajax-bar />
+    <router-view />
+  </div>
+
 </template>
 
 <script>
@@ -37,5 +41,10 @@ export default defineComponent({
 })
 </script>
 
+<style lang="less">
+.point{
+  cursor: url('assets/images/point.png'),default;
+}
+</style>
 
 

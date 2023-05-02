@@ -2,33 +2,80 @@
   <div class="login-page">
     <q-card class="my-card   login-form-content">
       <div class="title">肌理音乐后台</div>
-      <q-form
-        class="q-gutter-md form"
-        @submit="onsubmit(username,password)"
-
-      >
+      <q-form class="q-gutter-md form" @submit="submit">
         <q-input
           filled
-          v-model="username"
+          v-model.t.trim="form.username"
           label="账号"
           hint="Account | Mobile number"
+          square
+          dense
+          debounce="500"
+          placeholder="用户名："
+          hide-bottom-space
           lazy-rules
           :rules="[ val => val && val.length > 0 || '账号不正确']"
         />
         <q-input
           filled
-          v-model="password"
+          clear-icon="cancel"
+          v-model.trim="form.password"
+          :type="isPwd ? 'password' : 'text'"
           label="密码"
-          hint="input password"
+          placeholder="密码："
+          debounce="500"
+          hide-bottom-space
           lazy-rules
-          type="password"
-          :rules="[ val => val && val.length > 0 || '密码不正确']"
-        />
+          square
+          :rules="[ val => val && val.length > 0 || '请输入密码']"
+        >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
 
-        <q-toggle v-model="accept" label="记住我"/>
+        <q-input
+          outlined
+          dense
+          debounce="500"
+          v-model="form.captcha"
+          placeholder="验证码："
+          bg-color="white"
+          lazy-rules
+          hide-bottom-space
+          square
+          :rules="[(val) => (val && val.length > 0) || '请输入验证码']"
+        >
+          <template v-slot:after>
+            <img id="captcha" class="codeImage cursor-pointer" @click="captcha"/>
+          </template>
+        </q-input>
+        <div class="row">
+          <q-checkbox color="green-5" v-model="autoLogin" label="记住密码" />
+          <q-space/>
+        </div>
+
 
         <div>
-          <q-btn class="full-width" label="登录" type="submit" color="primary"/>
+          <q-btn
+            dense
+            unelevated
+            label="登 录"
+            size="17px"
+            color="secondary"
+            class="full-width no-border-radius q-pa-none"
+            type="submit"
+            :loading="loading"
+          >
+            <template v-slot:loading>
+              <q-spinner-ios class="on-left"/>
+              登录...
+            </template>
+          </q-btn>
         </div>
       </q-form>
     </q-card>
@@ -38,68 +85,56 @@
 
 <script>
 
-import {QSpinnerFacebook, useQuasar} from 'quasar'
-import {onBeforeUnmount, ref} from 'vue'
-import {useStore} from "vuex";
-import {useRoute, useRouter} from "vue-router";
+import {uid} from 'quasar'
+import {ref} from 'vue'
+import store from "src/store";
+import {useNotify} from "src/composables/useNotify";
 
 export default {
   name: "Login",
-  setup() {
-    const $q = useQuasar()
-    const store = useStore()
-
-    const username = ref('')
-    const password = ref('')
-    const accept = ref(false)
-    const router = useRouter()
-    const route = useRoute()
-
-    let timer
-
-
-
-
-    const onsubmit = (username, password) => {
-      $q.loading.show({
-        spinner: QSpinnerFacebook,
-        spinnerColor: 'blue',
-        spinnerSize: 140,
-        backgroundColor: "gray",
-        message: '正在登录',
-        messageColor: 'black'
-      })
-
+  data() {
+    return {
+      form: {
+        username: 'admin',
+        password: '123456',
+        captcha: '',
+        checkKey: '',
+      },
+      isPwd: true,
+      loading: false,
+      autoLogin:true,
+    }
+  },
+  methods: {
+    captcha() {
+      this.form.checkKey = uid();
+      this.$api.get(`/tokens/randomImage/${this.form.checkKey}`).then((res) => {
+        document.getElementById("captcha").src = res.data;
+      });
+    },
+    submit() {
+      console.log("备案登记了")
+      this.loading = true;
       // 登录操作
-      store.dispatch("login", {username: username, password: password}).then(() => {
+      store.dispatch("login", this.form).then(() => {
         // 获取当前用户
         store.dispatch('fetchCurrentUser').then(currentUser => {
           // 是否有资格登录
           let superAdmin = currentUser.roles.find(role => role.name === "ROLE_SUPER_ADMIN")
-          $q.loading.hide()
           if (superAdmin) {
             //查询redirect 参数
-            router.push({path: route.query.redirect || '/'})
+            this.$router.push({path: this.$route.query.redirect || '/'})
           } else {
             store.dispatch("logout")
-            $q.notify({
-              position: "top",
-              message: "你的权限无法访问后台",
-              icon: 'announcement',
-              color: "negative"
-            })
+            useNotify('你的权限无法访问后台')
           }
         })
       })
+      this.loading = false
     }
-    return {
-      username,
-      password,
-      accept,
-      onsubmit,
-
-
-    }
+  },
+  mounted() {
+    this.captcha()
   }
 }
 </script>
@@ -113,9 +148,8 @@ export default {
   flex-direction: column;
   justify-content: center;
   background-image: url("../assets/images/JilijiliBG.png");
-  position:fixed;
-  background-size:100% 100%;
-
+  position: fixed;
+  background-size: 100% 100%;
 
 
   .login-form-content {

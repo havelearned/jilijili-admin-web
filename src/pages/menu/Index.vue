@@ -1,72 +1,53 @@
 <template>
-  <div class="page">
-    <q-card class="my-card " flat>
-      <q-card-section>
-        <q-card-section class="card-section-content">
-          <q-img  fit="scale-down" src="/images/logo-lg.png" />
-        </q-card-section>
-      </q-card-section>
-    </q-card>
-    <q-list bordered class="rounded-borders" dense padding>
-      <q-expansion-item
-        group="semigroup"
-        v-for="(menu,index) in menus" :key="index" :to="menu.meta.path">
-        <template v-slot:header>
-          <q-item-section avatar>
-            <q-icon :name="menu.meta.icon"></q-icon>
-          </q-item-section>
-          <q-item-section>
-            {{ menu.meta.title }}
-          </q-item-section>
-        </template>
-        <q-separator/>
 
-        <q-expansion-item
-          group="semigroup-children"
-          v-if="menu.children"
-          v-for="(item,index) in menu.children"
-          :key="index"
-          :to="item.meta.path"
-          :header-inset-level="1"
-          hide-expand-icon
-          expand-separator
-        >
-          <template v-slot:header>
-            <q-item-section avatar>
-              <q-icon :name="item.meta.icon"></q-icon>
-            </q-item-section>
-            <q-item-section>
-              {{ item.meta.title }}
-            </q-item-section>
-          </template>
-        </q-expansion-item>
-        <q-card v-else>
-          <q-card-section>
-            {{ menu.meta.title }}
-          </q-card-section>
-        </q-card>
-        <q-separator/>
-      </q-expansion-item>
-
-    </q-list>
-
-  </div>
+  <q-expansion-item
+    v-for="(menu,index) in menus"
+    :key="index"
+    :to="menu.meta.path"
+    :icon="menu.meta.icon || 'toc'"
+    :label="menu.meta.title"
+    :group="menu.id"
+    :hide-expand-icon="!menu.children"
+  >
+<!--    <Menus v-if="menu.children" :menu-list="menu.children" :level="level+1"></Menus>-->
+    <q-expansion-item
+      group="semigroup-children"
+      v-if="menu.children"
+      v-for="(item,index) in menu.children"
+      :key="index"
+      :to="item.meta.path"
+      :icon="item.meta.icon || 'toc'"
+      :label="item.meta.title"
+      :header-inset-level="1"
+      :hide-expand-icon="!!menu.children">
+    </q-expansion-item>
+  </q-expansion-item>
 </template>
 
 <script>
 import {useRouter} from "vue-router";
 
-
 export default {
+  name: "menus",
+  components: {},
+  props:{
+    menuList: Array,
+    level: Number,
+  },
+  data(){
+    return{
+
+    }
+
+  },
+  methods:{
+
+  },
 
   setup() {
     let router = useRouter()
-
     const route = router.options.routes;
-
     const menus = route.at(0).children
-
-
     return {
       menus,
     }
@@ -77,18 +58,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.page {
-  width: 100%;
-  height: 100%;
-  //background-color: #9C27B0;
-
-  .card-section-content {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-
-  }
-}
 
 
 </style>

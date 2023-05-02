@@ -4,6 +4,6 @@
  * */
 import {api} from "../boot/axios.js"
 
-export const create = (username, password) => {
-  return api.post("/tokens/", {username, password})
+export const create = (username, password,checkKey,captcha) => {
+  return api.post("/tokens/", {username, password,checkKey,captcha})
 }
