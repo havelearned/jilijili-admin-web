@@ -64,11 +64,26 @@ api.interceptors.response.use(response => {
 
 // 处理错误提示信息
 function handleErrorMessages(error) {
+  let msg = '';
   switch (error.message) {
     case "Network Error":
-      Notify.create({
-        type: "negative", message: "网络错误,请检查是否链接到互联网!!!", position: "top",
-      })
+      msg += '网络错误,请检查是否链接到互联网!!!'
+      break;
+    case -1:
+      msg += '连接失败';
+      break;
+    case 500:
+      msg += '内部错误';
+      break;
+    case 404:
+      msg += '页面不存在';
+      break;
+    case 401:
+      msg += '登录超时，请重新登录';
+      // goLogin();
+      break;
+    case 403:
+      msg += '权限不足';
       break;
     default: {
       Notify.create({
@@ -76,6 +91,10 @@ function handleErrorMessages(error) {
       })
     }
   }
+
+  Notify.create({
+    type: "negative", message: msg, position: "top",
+  })
 }
 
 
@@ -83,6 +102,7 @@ export default boot(({app, Vue}) => {
   app.config.globalProperties.$axios = axios
 
   app.config.globalProperties.$api = api
+
 })
 
 export {api}

@@ -60,7 +60,6 @@
                 <q-img src="https://cdn.quasar.dev/img/parallax2.jpg">
                   <div class="absolute-bottom">
                     <strong>专辑名字:{{ props.row.singerName }}</strong><br>
-                    <strong>歌手:{{ props.row.singerType }}</strong><br>
                     专辑简介: {{ props.row.singerDetails }}<br>
                   </div>
                 </q-img>

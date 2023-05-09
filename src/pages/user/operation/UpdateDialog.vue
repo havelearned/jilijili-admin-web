@@ -34,7 +34,6 @@ const addData = {
   singerName: undefined,
   singerPhoto: undefined,
   singerDetails: undefined,
-  singerType: undefined
 }
 
 </script>

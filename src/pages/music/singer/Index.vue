@@ -63,7 +63,7 @@
             class="on-left"
             @input="query"
             debounce="500"
-            v-model="key"
+            v-model="searchForm.singerName"
           >
             <template #append>
               <q-btn flat round icon="search" color="primary" @click="query" :loading="loading">
@@ -73,7 +73,7 @@
           </q-input>
           <q-space/>
           <div class="q-gutter-xs">
-            <q-btn icon="add" no-wrap color="primary" label="新建" @click="add"/>
+            <q-btn icon="add" no-wrap color="primary" label="新建" @click="openAdd"/>
             <q-btn
               :disable="selected.length === 0"
               no-wrap
@@ -118,16 +118,13 @@
 
             <!-- 歌手内容 -->
             <q-card>
-              <q-card-section class="text-center">
+              <q-card-section class="text-center" @click="infoRow(props.row)">
                 <q-img
                   ratio="1"
                   :srcset="props.row.singerPhoto+' 300w'">
                   <div class="absolute-bottom text-body1 text-center">
                     <div class="q-ma-lg q-pa-sm-lg">
                       <strong>{{ props.row.singerName }}</strong>
-                      <br>
-                      <br>
-                      <q-badge outline color="orange" :label="props.row.singerType"/>
                     </div>
                   </div>
                   <template v-slot:error>
@@ -148,8 +145,8 @@
       </template>
     </q-table>
 
-    <q-dialog maximized flat persistent ref="dialog">
-      <q-form @submit="submit" class="dialog_card column bg-white">
+    <q-dialog maximized flat persistent v-model="isOpenAddDialog">
+      <q-form @submit="submitBefore" class="dialog_card column bg-white">
         <h5 class="view_title justify-between q-px-md">
           {{ editType }}歌手
           <q-btn dense outline round icon="clear" size="sm" v-close-popup/>
@@ -170,38 +167,12 @@
               />
             </div>
 
-            <div class="col-12">
-              <h5>歌手类型：</h5>
-              <q-select
-                filled
-                clearable
-                transition-show="flip-up"
-                transition-hide="flip-down"
-                v-model="form.singerType"
-                lazy-rules
-                emit-value
-                map-options
-                :rules="[value => value|| '歌手类型不能为空']"
-                :options="singer_type_selection()"
-              ></q-select>
-            </div>
 
-            <div class="col-12">
-              <h5>歌手介绍:</h5>
-              <q-input
-                filled
-                clearable
-                type="textarea"
-                v-model="form.singerDetails"
-                shadow-text="0-998个字符"
-              />
-            </div>
+
             <br>
             <div class="col-12">
-              <q-icon name="star" color="red"/>
-
+              <h5>歌手图片:</h5>
               <q-input type="url"
-                       label="上传图片"
                        @click="selectFiles"
                        v-model="form.singerPhoto">
                 <q-uploader
@@ -219,6 +190,10 @@
                   @uploaded="uploadedFiles"
                 />
               </q-input>
+            </div>
+            <div class="col-12">
+              <h5>歌手介绍:</h5>
+              <v-md-editor v-model="form.singerDetails" height="400px"></v-md-editor>
             </div>
           </div>
           <div class="col-12">
@@ -244,7 +219,82 @@
           <q-btn class="q-mx-sm" color="primary" icon="mdi-check-bold" label="提交" type="submit"/>
         </div>
       </q-form>
+    </q-dialog>
+    <q-dialog maximized flat persistent ref="dialog">
+      <q-form @submit="submit" class="dialog_card column bg-white">
+        <h5 class="view_title justify-between q-px-md">
+          {{ editType }}歌手
+          <q-btn dense outline round icon="clear" size="sm" v-close-popup/>
+        </h5>
+        <q-scroll-area class="col">
+          <div class="row q-col-gutter-x-md dialog_form q-pa-md">
+            <div class="col-12">
+              <h5>
+                <q-icon name="star" color="red"/>
+                歌手名称：
+              </h5>
+              <q-input
+                clearable
+                filled
+                v-model="form.singerName"
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || '歌手名称不能为空']"
+              />
+            </div>
 
+
+            <div class="col-12">
+              <br>
+              <q-icon name="star" color="red"/>
+              <q-input type="url"
+                       label="上传图片"
+                       @click="selectFiles"
+                       v-model="form.singerPhoto">
+                <q-uploader
+                  auto-upload
+                  :headers="headers"
+                  :url="uploadAttUrl"
+                  :max-files="1"
+                  field-name="files"
+                  ref="fileUploader"
+                  color="teal"
+                  class="hidden"
+                  flat
+                  bordered
+                  style="max-width: 300px"
+                  @uploaded="uploadedFiles"
+                />
+              </q-input>
+            </div>
+            <div class="col-12">
+              <h5>歌手介绍:</h5>
+              <v-md-editor v-model="form.singerDetails" height="400px"></v-md-editor>
+            </div>
+            <br>
+          </div>
+          <div class="col-12">
+            <q-img
+              v-for="(f,index) in attachments"
+              :key="index"
+              transition="fade"
+              :src="f"
+              style="width: 150px"
+              ratio="1"
+              spinner-color="white"
+              class="rounded-borders"
+            >
+              <q-btn class="absolute-top text-right" dense round @click="deleteImage()"
+                     icon="close"/>
+              <div class="absolute-bottom text-center text-body2">{{ f }}</div>
+            </q-img>
+          </div>
+        </q-scroll-area>
+
+        <div class="row justify-center q-pa-md">
+          <q-btn outline color="primary" icon="mdi-close-thick" label="关闭" v-close-popup/>
+          <q-btn class="q-mx-sm" color="primary" icon="mdi-check-bold" label="提交" type="submit"/>
+        </div>
+      </q-form>
     </q-dialog>
     <confirm ref="confirmDialog" :msg="confirmMsg" @confirm="deleteBatch()"/>
     <q-dialog v-model="isOpenInfoDialog" maximized flat persistent>
@@ -264,6 +314,7 @@
               </q-img>
             </div>
             <div class="col-6">
+              <v-md-preview v-if="form.singerDetails" :text="form.singerDetails"></v-md-preview>
             </div>
           </div>
         </q-scroll-area>
@@ -280,11 +331,13 @@ import {IndexMixin} from "boot/mixins";
 import Confirm from "src/composables/confirm.vue";
 import {singer_type_selection} from "src/utils/dictionary";
 import BtnDel from "src/composables/btndel.vue";
-
+import {useNotify} from "src/composables/useNotify";
 
 export default {
   mixins: [IndexMixin],
-  components: {BtnDel, Confirm},
+  components: {
+    BtnDel, Confirm
+  },
   props: {
     childHead: Boolean,
   },
@@ -308,22 +361,20 @@ export default {
           name: 'singerDetails', align: 'center', label: '歌手简介', field: row => row.singerDetails,
           format: val => `${val}`, sortable: true
         },
-        // {name: 'singerPhoto', align: 'center', label: '歌手头像', field: row => row.name,
-        //   format: val => `${val}`, sortable: true},
-        {
-          name: 'singerType', align: 'center', label: '歌手类型', field: row => row.singerType,
-          format: val => `${val}`, sortable: true
-        },
         {
           name: 'createdTime', align: 'center', label: '创建时间', field: row => row.createdTime,
           format: val => `${val}`, sortable: true
         },
       ],
       isOpenInfoDialog: false,
+      isOpenAddDialog: false,
       loading: false,
       headers: [{name: 'Authorization', value: `Bearer ${this.$store.state.user.token}`}],
       uploadAttUrl: `${import.meta.env.VITE_BASEURL}/upload/multiple/minio`,
       attachments: [],
+      markdownOption: {
+        bold: true, // 粗体
+      },
       url: {
         list: '/singer/list',
         add: '/singer/',
@@ -362,8 +413,15 @@ export default {
     infoRow(row) {
       this.form = row;
       this.isOpenInfoDialog = true
-
-
+    },
+    openAdd() {
+      this.form = {}
+      this.editType = "新建"
+      this.isOpenAddDialog = true
+    },
+    submitBefore() {
+      this.submit()
+      this.isOpenAddDialog = false;
     },
     initDcit() {
       // this.$api.get("/sys/dect/type","singer_type")

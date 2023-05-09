@@ -9,7 +9,6 @@ export const useSingerData = () => {
     size: 8,
     id: undefined,
     singerName: undefined,
-    singerType: undefined,
     createdTime: undefined, // 创建时间
     specifyTime: undefined, // 匹配时间
     locked: 0
@@ -21,7 +20,6 @@ export const useSingerData = () => {
       singerName: undefined, // 歌手名称
       singerDetails: undefined, // 歌手信息
       singerPhoto: undefined, // 歌手头像
-      singerType: undefined, // 歌手类型
       createdTime: undefined, // 创建时间
       specifyTime: undefined, // 匹配时间
     },
@@ -69,7 +67,6 @@ export const useSingerData = () => {
     searchFrom.value.createdTime = undefined
     searchFrom.value.specifyTime = undefined
     searchFrom.value.singerName = undefined
-    searchFrom.value.singerType = undefined
     searchFrom.value.id = undefined
   }
 
