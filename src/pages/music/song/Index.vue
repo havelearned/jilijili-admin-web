@@ -122,7 +122,7 @@
         </template>
         <template #body-cell-musicFilepath="props">
           <q-td :props="props">
-<!--            <div>{{ ellipsis(props.row.musicFilepath, 20) }}</div>-->
+            <!--            <div>{{ ellipsis(props.row.musicFilepath, 20) }}</div>-->
             <figure>
               <audio
                 controls
@@ -226,17 +226,15 @@ import FileUpload from "src/composables/upload/FileUpload.vue";
 
 
 export default {
+  name: "song",
   mixins: [IndexMixin],
   components: {
     FileUpload,
     SingerSearch,
     BtnDel,
     Confirm,
-
-
   },
   data() {
-
     return {
       columns: [
         {

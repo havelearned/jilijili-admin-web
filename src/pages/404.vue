@@ -22,6 +22,9 @@ export default {
   setup() {
 
     return {}
+  },
+  mounted() {
+
   }
 
 }

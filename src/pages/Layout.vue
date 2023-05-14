@@ -39,13 +39,13 @@
       <q-card class="my-card " flat>
         <q-card-section>
           <q-card-section class="card-section-content">
-            <q-img  fit="scale-down" src="/images/logo-lg.png" />
+            <q-img fit="scale-down" src="/images/logo-lg.png"/>
             <q-tooltip anchor="center right" self="center left">欢迎使用</q-tooltip>
           </q-card-section>
         </q-card-section>
       </q-card>
       <q-separator/>
-      <menus></menus>
+      <menus :menu-list="routerList" :level="1"></menus>
     </q-drawer>
 
 
@@ -58,13 +58,9 @@
 </template>
 
 <script>
-import {computed, ref} from 'vue'
-import {useStore} from "vuex";
+import {computed} from 'vue'
 import menus from "./menu/Index.vue"
 import chatFab from "./chat/Index.vue"
-
-
-import {useQuasar} from 'quasar'
 
 export default {
   // name: Layout,
@@ -72,40 +68,41 @@ export default {
     menus,
     chatFab,
   },
-  setup() {
-    const $q = useQuasar()
-    const leftDrawerOpen = ref(false)
-    const store = useStore();
+  data() {
     return {
-      leftDrawerOpen,
-      nicknameFastWord: computed(
-        () => store.getters["nicknameFastWord"]
-      ),
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
-      handleLogout() {
-
-        $q.dialog({
-          dark: false,
-          title: '退出',
-          message: '确定要退出吗?',
-          cancel: "取消",
-          ok: "确定,马上退出",
-          persistent: true,
-
-        }).onOk(() => {
-          store.dispatch("logout").then(() => window.location.reload())
-        }).onOk(() => {
-          store.dispatch("logout").then(() => window.location.reload())
-        }).onCancel(() => {
-
-        }).onDismiss(() => {
-
-        })
-
-      }
+      routerList: this.routerList = this.$router.options.routes[0].children,
+      nicknameFastWord: computed(() => this.$store.getters["nicknameFastWord"]),
+      leftDrawerOpen: false,
     }
+  },
+  methods: {
+
+    toggleLeftDrawer() {
+      this.leftDrawerOpen = !this.leftDrawerOpen
+    },
+    handleLogout() {
+      $q.dialog({
+        dark: false,
+        title: '退出',
+        message: '确定要退出吗?',
+        cancel: "取消",
+        ok: "确定,马上退出",
+        persistent: true,
+
+      }).onOk(() => {
+        this.$store.dispatch("logout").then(() => window.location.reload())
+      }).onOk(() => {
+        this.$store.dispatch("logout").then(() => window.location.reload())
+      }).onCancel(() => {
+
+      }).onDismiss(() => {
+      })
+
+    }
+  },
+  mounted() {
+
+
   }
 }
 </script>

@@ -1,56 +1,74 @@
 <template>
-
   <q-expansion-item
-    v-for="(menu,index) in menus"
-    :key="index"
-    :to="menu.meta.path"
+    :header-inset-level="calcLevel"
+    v-for="(menu,index) in menuList"
     :icon="menu.meta.icon || 'toc'"
     :label="menu.meta.title"
-    :group="menu.id"
+    :model-value="openMenu(menu)"
     :hide-expand-icon="!menu.children"
+    :to="menu.meta.path"
   >
-<!--    <Menus v-if="menu.children" :menu-list="menu.children" :level="level+1"></Menus>-->
-    <q-expansion-item
-      group="semigroup-children"
-      v-if="menu.children"
-      v-for="(item,index) in menu.children"
-      :key="index"
-      :to="item.meta.path"
-      :icon="item.meta.icon || 'toc'"
-      :label="item.meta.title"
-      :header-inset-level="1"
-      :hide-expand-icon="!!menu.children">
-    </q-expansion-item>
+    <menus v-if="menu.children" :menuList="menu.children" :level="level+1"/>
   </q-expansion-item>
 </template>
 
 <script>
-import {useRouter} from "vue-router";
 
 export default {
   name: "menus",
   components: {},
-  props:{
-    menuList: Array,
+  props: {
+    menuList: Object,
     level: Number,
   },
-  data(){
-    return{
-
-    }
+  data() {
+    return {}
 
   },
-  methods:{
-
+  computed: {
+    calcLevel() {
+      if (this.level === 1) {
+        return 0;
+      }
+      return (this.level - 1) * 0.4;
+    },
+  },
+  methods: {
+    headerStyleActive(item) {
+      return this.match(item) ? {backgroundColor: '#1890ff'} : {};
+    },
+    matchOpen(item, result) {
+      if (this.match(item)) {
+        result.open = true;
+      }
+      if (!result.open && item.children && item.children.length > 0) {
+        item.children.forEach((child) => {
+          this.matchOpen(child, result);
+        });
+      }
+    },
+    openMenu(item) {
+      const result = {open: false};
+      this.matchOpen(item, result);
+      return result.open;
+    },
+    match(item) {
+      if (this.$route.path === item.path) {
+        if (this.$route.query && item.query) {
+          if (this.$route.query.id === item.query.id) {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      }
+      return false;
+    },
   },
 
-  setup() {
-    let router = useRouter()
-    const route = router.options.routes;
-    const menus = route.at(0).children
-    return {
-      menus,
-    }
+  mounted() {
+
+
   }
 }
 

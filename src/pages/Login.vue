@@ -48,14 +48,18 @@
           lazy-rules
           hide-bottom-space
           square
+          :loading="captchaLoading"
           :rules="[(val) => (val && val.length > 0) || '请输入验证码']"
         >
           <template v-slot:after>
             <img id="captcha" class="codeImage cursor-pointer" @click="captcha"/>
           </template>
+          <template v-slot:loading>
+            <div>加载中</div>
+          </template>
         </q-input>
         <div class="row">
-          <q-checkbox color="green-5" v-model="autoLogin" label="记住密码" />
+          <q-checkbox color="green-5" v-model="autoLogin" label="记住密码"/>
           <q-space/>
         </div>
 
@@ -86,14 +90,14 @@
 <script>
 
 import {uid} from 'quasar'
-import {ref} from 'vue'
 import store from "src/store";
 import {useNotify} from "src/composables/useNotify";
-
+import {setRouter} from "src/utils/auth";
 export default {
   name: "Login",
   data() {
     return {
+      captchaLoading: true,
       form: {
         username: 'admin',
         password: '123456',
@@ -102,18 +106,19 @@ export default {
       },
       isPwd: true,
       loading: false,
-      autoLogin:true,
+      autoLogin: true,
     }
   },
   methods: {
     captcha() {
+      this.captchaLoading = true
       this.form.checkKey = uid();
       this.$api.get(`/tokens/randomImage/${this.form.checkKey}`).then((res) => {
         document.getElementById("captcha").src = res.data;
       });
+      this.captchaLoading = false
     },
     submit() {
-      console.log("备案登记了")
       this.loading = true;
       // 登录操作
       store.dispatch("login", this.form).then(() => {
@@ -122,6 +127,10 @@ export default {
           // 是否有资格登录
           let superAdmin = currentUser.roles.find(role => role.name === "ROLE_SUPER_ADMIN")
           if (superAdmin) {
+            // store.dispatch("fetchMenuList").then(menuList => {
+            //   console.log("menuList==>", store.getters['getUserMenuList']);
+            //   this.initMenu(menuList)
+            // })
             //查询redirect 参数
             this.$router.push({path: this.$route.query.redirect || '/'})
           } else {
@@ -131,9 +140,42 @@ export default {
         })
       })
       this.loading = false
+    },
+    initMenu(menuinfo) {
+      if (menuinfo.length === 0) {
+        useNotify().negativeNotify("当前账号未分配菜单请联系管理员!!!")
+      }
+      let menu = this.imTr(menuinfo)
+      this.$store.commit('SET_MENULIST',menu)
+      setRouter(menu)
+    },
+    imTr(menu) {
+      const result = [];
+      menu.forEach(v => {
+        result.push({
+          path: v.path,
+          name: v.menuName,
+          component: () => import(v.component),
+          meta: {
+            title: v.menuName,
+            icno: v.icon,
+            path: '/'+v.component,
+            perms: v.perms,
+            remark: v.remark,
+            isCache: v.isCache,
+            menuType: v.menuType,
+            isFrame: v.isFrame,
+            visible: v.visible,
+            status: v.status,
+          },
+          children: v.children ? this.imTr(v.children) : null
+        })
+      })
+      return result;
     }
   },
   mounted() {
+
     this.captcha()
   }
 }

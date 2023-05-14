@@ -136,7 +136,7 @@ import item from './item.vue';
 import BtnDel from "src/composables/btndel.vue";
 import PageHeader from "src/composables/page-header.vue";
 export default {
-  name: "Index",
+  name: "dict",
   mixins: [IndexMixin],
   components:{
     PageHeader,

@@ -2,7 +2,18 @@
   <div>日志记录</div>
 </template>
 
-<script setup>
+<script >
+export default {
+  name: "logging",
+  data(){
+    return{
+
+    }
+  },
+  methods:{
+
+  }
+}
 </script>
 
 <style scoped>

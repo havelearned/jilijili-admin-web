@@ -334,6 +334,7 @@ import BtnDel from "src/composables/btndel.vue";
 import {useNotify} from "src/composables/useNotify";
 
 export default {
+  name:"singer",
   mixins: [IndexMixin],
   components: {
     BtnDel, Confirm

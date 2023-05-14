@@ -28,3 +28,8 @@ export const deleted = (ids) => {
 export const userinfo = (id) => {
   return api.get(`/users/${id}`)
 }
+
+
+export const userMenu = (id) => {
+  return api.get(`/users/menu/${id}`)
+}

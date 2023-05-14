@@ -4,7 +4,15 @@
 
 <script>
 export default {
-  name: "Index"
+  name: "system",
+  data(){
+    return{
+
+    }
+  },
+  methods:{
+
+  }
 }
 </script>
 

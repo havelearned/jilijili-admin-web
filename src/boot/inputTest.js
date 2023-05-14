@@ -1,5 +1,24 @@
 export const requiredTest = (v) => !!v || '不可以为空';
 
+
+export const usernameTest=(v)=>{
+  let t = null
+  const p = /^.{6,16}$/
+  if (v && !p.test(v)) {
+    t = "长度在6-16之间的任意字符"
+  }
+  return t;
+}
+
+export const passwordTest =(v) => {
+  let t = null
+  const p = /^(?=[a-zA-Z0-9]{6,32}$)[a-zA-Z0-9]*$/
+  if (v && !p.test(v)) {
+    t = "长度最小为6最大32 必须字母或者数字"
+  }
+  return t;
+}
+
 export const emailTest = (v) => {
   let t = null;
   const p = /^([A-Za-z0-9_\-.\u4e00-\u9fa5])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,8})$/;

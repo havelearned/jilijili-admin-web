@@ -18,7 +18,14 @@
 <script>
 
 export default {
-  components: {}
+  name:"messageMonitoring",
+  components: {},
+  data(){
+    return {
+
+    }
+  },
+  methods(){}
 
 }
 </script>

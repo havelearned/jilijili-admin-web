@@ -156,11 +156,11 @@ import BtnDel from "src/composables/btndel.vue";
 import tree from "pages/fileLibrary/tree.vue";
 
 export default {
+  name:"fileLibrary",
   mixins: [IndexMixin],
   components: {
     BtnDel,
     tree
-
   },
   data() {
     return {

@@ -68,16 +68,26 @@
 
 </template>
 
-<script setup>
+<script>
 import Singer from "src/pages/music/singer/Index.vue";
 import Album from "src/pages/music/album/Index.vue";
 import Song from "src/pages/music/song/Index.vue";
-import {ref} from "vue";
 
+export default {
+  name: "music",
+  components: {
+    Singer, Album, Song
+  },
+  data() {
+    return {
+      childHead: false,
+      keywords: '',
+      tab: 'tab3'
+    }
 
-const childHead = ref(false);
-const keywords = ref('');
-const tab = ref('tab3');
+  },
+  methods: {}
+}
 </script>
 
 <style scoped lang="less">

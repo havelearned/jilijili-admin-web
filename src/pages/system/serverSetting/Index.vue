@@ -2,7 +2,18 @@
 <div>服务器设置</div>
 </template>
 
-<script setup >
+<script >
+export default {
+  name: "serverSetting",
+  data(){
+    return{
+
+    }
+  },
+  methods:{
+
+  }
+}
 
 </script>
 
