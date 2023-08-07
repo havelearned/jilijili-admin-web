@@ -1,17 +1,16 @@
-import {createStore, createLogger} from 'vuex'
-import user from './modules/user.js'
-import menuRoutes from './modules/menuRoutes.js'
-import sysConfig from "./modules/sysConfig.js";
-
-// const debug = process.env !== 'sdfsadfsdf'
+import { createStore } from 'vuex'
+import user from "@/store/user/user";
 
 export default createStore({
-  modules: {
-    menuRoutes,
-    sysConfig,
-    user,
-
+  state: {
   },
-  // plugins: debug ? [createLogger()] : []
+  getters: {
+  },
+  mutations: {
+  },
+  actions: {
+  },
+  modules: {
+    user
+  }
 })
-

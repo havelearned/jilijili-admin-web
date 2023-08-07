@@ -1,55 +1,73 @@
-import {route} from 'quasar/wrappers'
-import {createMemoryHistory, createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
-import routes from './routes'
-import {getToken} from "src/utils/auth.js";
-import {whiteList} from "src/permission.js";
+import {createRouter, createWebHistory} from 'vue-router'
+import Cookie from "@/boot/cookie";
+import {useNotify} from "@/boot/useNotify";
+import {dynamicRoutes} from "@/router/permissions";
+
+const routes = [
+    {
+        path: '/',
+        name:"首页",
+        redirect:"/home",
+        // component: () => import( '@/layout/home/index.vue'),
+        // children: dynamicRoutes
+        children: [
+            {
+                path: '/home',
+                name: '首页',
+                component: () => import( '@/layout/home/index.vue'),
+                children: dynamicRoutes
+            },
 
 
-export default route(function (/* { store, ssrContext } */) {
-  const createHistory = process.env.SERVER
-    ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
+        ]
+    },
+    {
+        path: '/login',
+        name: 'login',
+        meta:{menuId: 2},
+        component: () => import('@/layout/login')
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: '404',
+        meta:{menuId: 3},
+        component: () => import('@/layout/404')
+    },
+]
 
-  const Router = createRouter({
-    scrollBehavior: () => ({left: 0, top: 0}),
-    routes,
-
-    // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
-  })
-
-// 每次跳转前都会到这里
-  Router.beforeEach((to, from, next) => {
-    const hasToken = getToken()
-
-    // console.log("to=>",to,"\nfrom=>",from,"\n next=>",next);
-
-    if (hasToken) {
-    // if (true) {
-
-      // 已经有了token不在访问login页面,返回首页
-      if (to.path === '/login') {
-        next({path: '/'})
-        // 权限认证
-      } else {
-        next()
-      }
-    } else {
-      // 在白名单内
-      if (whiteList.indexOf(to.path) !== -1) {
-        next()
-      } else {
-        // 跳转到login页面,然后带上当前的页面路径
-        next({
-          path: `/login`,
-          query: {redirect: to.path}
-        })
-      }
-    }
-  })
-
-  return Router
+const router = createRouter({
+    history: createWebHistory(process.env.BASE_URL),
+    routes
 })
 
+
+const whiteList = ['/login', '/404', '500']
+router.beforeEach((to, from, next) => {
+
+    let token = Cookie.getCookies(Cookie.TOKENNAME)
+    let menuList = Cookie.getLocalValue(Cookie.MENULIST)
+
+    if (token&&menuList) {
+        // 已经有了token不在访问login页面,返回首页
+        if (to.path === '/login') {
+            next({path: '/'})
+        } else {
+            next()
+        }
+    } else {
+        // 在白名单内
+        if (whiteList.indexOf(to.path) !== -1) {
+            next()
+        } else {
+            useNotify().warningNotify("登录过期,请重新登录")
+            // 跳转到login页面,然后带上当前的页面路径
+            next({
+                path: `/login`,
+                query: {redirect: to.path}
+            })
+        }
+
+    }
+})
+
+export default router

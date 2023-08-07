@@ -1,55 +1,64 @@
 {
-  "name": "jilijili-music-admin",
-  "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "肌理音乐后台",
-  "author": "admin@ljj <1918652173@qq.com>",
+  "name": "jilijili-admin-web",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "quasar dev": "default",
-    "test": "echo \"No test specified\" && exit 0"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@kangc/v-md-editor": "^2.3.15",
     "@quasar/extras": "^1.0.0",
-    "axios": "^0.21.1",
-    "echarts": "^5.4.1",
-    "highlight.js": "^11.8.0",
-    "js-cookie": "^3.0.1",
+    "@stomp/stompjs": "^7.0.0",
+    "aplayer": "^1.10.1",
+    "axios": "^1.4.0",
+    "core-js": "^3.8.3",
+    "js-cookie": "^3.0.5",
+    "postcss-rtl": "^2.0.0",
     "prismjs": "^1.29.0",
-    "quasar": "^2.6.0",
+    "quasar": "^2.0.0",
+    "sockjs-client": "^1.6.1",
     "stylus": "^0.59.0",
-    "stylus-loader": "^7.1.0",
-    "vue": "^3.2.4",
-    "vue-echarts": "^6.5.4",
-    "vue-i18n": "^9.0.0",
-    "vue-router": "^4.0.0",
-    "vuex": "^4.0.1"
+    "stylus-loader": "^7.1.3",
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
-    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
-    "@quasar/app-vite": "^1.0.0",
-    "@vue/devtools": "^6.5.0",
-    "autoprefixer": "^10.4.2",
-    "electron": "^23.1.0",
-    "electron-packager": "^15.2.0",
-    "less": "^4.1.3",
-    "less-loader": "^11.1.0",
-    "postcss": "^8.4.14",
-    "push-dir": "^0.4.1",
-    "workbox-build": "^6.5.0",
-    "workbox-cacheable-response": "^6.5.0",
-    "workbox-core": "^6.5.0",
-    "workbox-expiration": "^6.5.0",
-    "workbox-precaching": "^6.5.0",
-    "workbox-routing": "^6.5.0",
-    "workbox-strategies": "^6.5.0"
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "sass": "1.32.12",
+    "sass-loader": "^13.3.2",
+    "style-resources-loader": "^1.4.1",
+    "vue-cli-plugin-quasar": "~5.0.2",
+    "vue-cli-plugin-style-resources-loader": "~0.1.5"
   },
-  "engines": {
-    "node": "^18 || ^16 || ^14.19",
-    "npm": ">= 6.13.4",
-    "yarn": ">= 1.21.1"
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
   },
-  "main": "index.js",
-  "license": "MIT"
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
 }
