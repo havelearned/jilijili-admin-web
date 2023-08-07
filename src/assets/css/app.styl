@@ -1,0 +1,190 @@
+-webkit-scrollbar
+  width 9px
+  height 9px
+  background-color transparent
+.q-scrollarea__thumb,-webkit-scrollbar-thumb
+  border-radius 9px
+  opacity .4
+  background-color $primary
+html,body
+  background $base
+  background-size cover
+  color $dark
+  font-family 'Roboto', '-apple-system', 'Helvetica Neue', 'Microsoft YaHei', Helvetica, Arial, sans-serif
+h1,h2,h3,h4,h5,h6
+  margin 0
+.list-move
+  transition transform 1s ease-out
+.list_shorter-move
+  transition transform .2s ease-out
+.ani
+  transition all .4s ease-out
+.ani_slow
+  transition all 1s ease-out
+a
+  color $primary
+
+.q-field--auto-height.q-field--labeled
+  .q-field__control-container
+    padding-top 8px
+.q-item__section--side
+  padding-right 0
+.q-field--auto-height.q-field--dense
+  .q-field__control, .q-field__native
+    min-height 36px
+.q-table th
+  font-size 14px
+.q-tab__label
+  font-size 14px
+.q-btn__wrapper
+  padding 0px 14px 0px 14px
+  min-height 32px
+  .q-btn__content
+      .on-left
+        margin-right 2px 
+.q-table
+  thead
+    th,td
+      position sticky
+      top 0
+      font-size 14px
+      transition none
+      opacity 1
+      z-index 1
+      color $t-dark
+    tr
+      background #e3efff
+      th
+        padding 0px 8px !important
+        position sticky
+        top 0
+        z-index 1
+  tbody
+    tr:nth-child(even)
+      background #f3f8fe
+    td
+      font-size 14px
+      padding 0px 16px !important
+.view_title
+  display flex
+  align-items center
+  height 40px
+  color $white
+  font-size 18px
+
+.dialog_card
+  background $white
+  min-width 80vw
+  height 80vh
+  pointer-events all
+  >.view_title
+    background $primary
+.dialog_tool
+  background $white
+  min-width 100vw
+  height 100vh
+  pointer-events all
+  >.view_title
+    background $primary
+.dialog_form
+  >div
+    min-height 95px
+  h5
+    font-size 14px
+    >ifirst-child
+      transform translate(0,-2px)
+.q_b_toggle
+  width 100%
+  border 1px $primary solid
+  color $primary
+  box-shadow unset
+  >button
+    flex 999 1 0%
+    .q-btn__wrapper
+      padding 0
+.q_b_tabs
+  border-bottom 1px $light solid
+  .q-tab--active
+    color $primary
+
+.toggle_btn
+  border 1px $primary solid
+  color $t-grey
+
+.cross_table
+  border-radius 0 !important
+  border 1px $light solid
+
+.cc-header
+  align-items center
+  justify-content space-between
+  display flex
+  flex-wrap wrap
+  margin-bottom 16px
+  
+.grid-item-select {
+  flex 1
+  border-style dashed
+  border-width 2px
+  border-color #00bfff
+  touch-action none
+}
+
+.cc-active-class
+  border 1px dashed #1890ff
+
+.cc-un-active-class
+  border 1px dashed lightgrey
+
+.cc-shadow-blue
+  box-shadow 0 0 6px 0 #1890ff
+/* 滚动条宽度 */
+-webkit-scrollbar
+  width 7px
+  height 3px
+
+/* 滚动条的滑块 */
+-webkit-scrollbar-thumb
+  background-color lightskyblue
+  border-radius 3px
+@media screen and (max-width: 1365px)
+  .q-ma-sm 
+    margin: 0px 0px !important
+  .q-table 
+    border: solid rgba(0,0,0,0) !important
+    border-width: 0 1px 1px 1px !important
+  .cc-admin >div .cross_table, .cc-admin .cc-view-catalog .cross_table 
+    border-radius: 0 !important
+    padding: 0px 0px !important
+  .q-tab-panel 
+    padding: 0px !important
+  .q-pa-md 
+    padding: 0px 0px !important
+  .display-item
+    width 100% !important
+  table
+    padding 5px !important
+    thead
+      display none !important
+    tbody
+      td
+        display block !important
+        text-align left !important
+        font-size 14px !important
+        border-bottom 0px dotted #ccc !important
+        border-left 0 !important
+      tr
+        margin-bottom 10px !important
+        display block !important
+        background rgba(0, 0, 0, 0.03)
+      td:before
+        content attr(data-label) '：'
+        min-width 60px !important
+        float left !important
+        text-align left !important
+        font-weight bold !important
+        position static !important
+      td, td:before
+        background-color transparent !important
+        height 35px !important
+        line-height 35px !important

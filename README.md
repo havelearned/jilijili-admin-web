@@ -1,24 +1,24 @@
-# Quasar App (jilijili-music-admin)
+# jilijili-admin-web
 
-A Quasar Project
-
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
+## Project setup
+```
+yarn install
 ```
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
+### Compiles and hot-reloads for development
+```
+yarn serve
 ```
 
-
-### Build the app for production
-```bash
-quasar build
+### Compiles and minifies for production
+```
+yarn build
 ```
 
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+### Lints and fixes files
+```
+yarn lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
