@@ -44,8 +44,6 @@ export const IndexMixin = {
             return true;
         },
         query(props) {
-
-
             if (!this.beforeQuery()) {
                 return false;
             }
@@ -85,7 +83,20 @@ export const IndexMixin = {
         del({id}) {
             this.loading = true;
             return this.$axios.delete(`${this.url.delete}`, {
-                params: {idList: id}
+                data: {idList: id}
+            }).then((r) => {
+                info(r.message);
+                this.delAfter();
+            }).finally(() => {
+                this.query();
+            });
+        },
+        delPlus(id) {
+            this.loading = true;
+            let idList = []
+            idList.push(id)
+            return this.$axios.delete(`${this.url.delete}`, {
+                data: idList
             }).then((r) => {
                 info(r.message);
                 this.delAfter();
@@ -100,11 +111,21 @@ export const IndexMixin = {
             this.confirmMsg = `确认删除这 ${this.selected.length} 条记录吗？`;
             this.$refs.confirmDialog.show();
         },
-
         deleteBatch() {
             this.loading = true;
             return this.$axios.delete(this.url.deleteBatch, {
                 params: {idList: this.selected.toString()}
+            }).then((r) => {
+                info(r.message);
+                this.selected = [];
+            }).finally(() => {
+                this.query();
+            });
+        },
+        deleteBatchPlus() {
+            this.loading = true;
+            return this.$axios.delete(this.url.deleteBatch, {
+                data: this.selected
             }).then((r) => {
                 info(r.message);
                 this.selected = [];

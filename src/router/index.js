@@ -28,6 +28,12 @@ const routes = [
         component: () => import('@/layout/login')
     },
     {
+        path: '/loading',
+        name: '加载',
+        meta:{menuId: 999999},
+        component: () => import('@/layout/login/loading.vue')
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: '404',
         meta:{menuId: 3},

@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { Notify } from 'quasar';
 
-console.log(process.env.NODE_ENV);
-console.log(process.env.VUE_APP_URL);
+// console.log(process.env.NODE_ENV);
+// console.log(process.env.VUE_APP_URL);
 const notify = (msg) => Notify.create({
     message: msg,
     color: 'negative',
@@ -15,8 +15,8 @@ export const goLogin = () => {
 export const NeedLoginCode = [401, 402, 403];
 
 export const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/',
-    timeout: 30*1000,
+    baseURL: 'http://localhost:11110',
+    // timeout: 3000,
     withCredentials:true, // 携带Cookie
 })
 
@@ -47,12 +47,19 @@ axiosInstance.interceptors.response.use(
     (error) => {
         let response = error.response
         let msg = '未知错误';
-        if(error.message){
-            switch (error.message){
+        if (error) {
+            switch (error.code) {
                 case 'Network Error':
-                    msg="服务器错误,请联系管理员!";break;
+                    msg = "服务器错误,请联系管理员!";
+                    break;
+                case "ECONNABORTED":
+                    msg = "连接超时!";
+                    break;
+                case 'ERR_ADDRESS_UNREACHABLE':
+                    msg = "网络错误,请检查网络设备是否连接正确!";
+                    break;
                 default:
-                    msg="未知错误!"
+                    msg = error.message
                     break;
             }
         }

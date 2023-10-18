@@ -92,7 +92,7 @@
                   color="negative"
                   label="批量删除"
                   @click="showConfirm()"
-                  icon="mdi-delete-variant"
+                  icon="delete"
               />
               <q-btn
                   color="primary"

@@ -2,8 +2,10 @@
   <div class="row q-gutter-md">
     <div class="col-4">
       <!-- 已拥有的容器 -->
-      <h5>当前角色</h5>
-      <q-card class="q-mb-md">
+      <q-item>
+        当前角色
+      </q-item>
+      <q-card class="q-ma-md">
         <q-card-section>
           <q-item v-for="item in ownedItems" :key="item.id" clickable @click="removeFromOwnedItems(item)">
             <q-item-section>
@@ -19,7 +21,9 @@
 
     <div class="col-6">
       <!-- 待点击后加入已拥有容器的容器 -->
-      <h5>分配角色</h5>
+      <q-item>
+        分配角色
+      </q-item>
       <q-card>
         <q-card-section v-if="availableItems.length === 0">
           <p style="text-align: center">暂无内容</p>
@@ -54,38 +58,30 @@ export default {
       required: true,
     },
   },
-  emits: ['update:ownedItems'],
+  emits: ['update:ownedItems','update:availableItems'],
   watch: {
     _ownedItems(newValue) {
       this._ownedItems = newValue
       this.$emit('update:ownedItems', newValue);
+    },
+    _availableItems(newValue) {
+      this._availableItems = newValue
+      this.$emit('update:availableItems', newValue);
     }
   },
   data() {
     return {
-      _ownedItems: this.ownedItems
+      _ownedItems: this.ownedItems,
+      _availableItems:this.availableItems
 
     };
   },
   mounted() {
-    // if (!this.ownedItems) {
-    //   this.ownedItems.push(
-    //       {id: 1, icon: 'path/to/icon1.png', text: 'Item 1'},
-    //       {id: 2, icon: 'path/to/icon2.png', text: 'Item 2'},)
-    // }
-    // if (!this.availableItems) {
-    //   this.availableItems.push({id: 3, icon: 'path/to/icon3.png', text: 'Item 3'},
-    //       {id: 4, icon: 'path/to/icon4.png', text: 'Item 4'},)
-    // }
-
-    console.log(this.ownedItems)
-
-
   },
   methods: {
+    // 添加到待提交list中
     addToOwnedItems(item) {
       // 将待点击的项添加到已拥有的项
-      this.value = item;
       this.ownedItems.push(item);
 
       // 在待点击容器中移除已添加的项
@@ -94,6 +90,7 @@ export default {
         this.availableItems.splice(index, 1);
       }
     },
+    // 从待提交list 移除
     removeFromOwnedItems(item) {
       // 至少保留一个项目，如果已拥有的容器中只有一个项目，则显示提示弹窗
       if (this.ownedItems.length === 1) {

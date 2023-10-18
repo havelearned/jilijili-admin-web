@@ -1,41 +1,7 @@
 <template>
   <q-list bordered class="rounded-borders">
-    <!--    <button @click="testclick">测试</button>-->
-    <!--    <q-expansion-item-->
-    <!--        expand-separator-->
-    <!--        icon="home"-->
-    <!--        label="首页"-->
-    <!--        default-opened>-->
-
-    <!--      <q-expansion-item-->
-    <!--          :header-inset-level="1"-->
-    <!--          expand-separator-->
-    <!--          icon="receipt"-->
-    <!--          label="Receipts"-->
-    <!--          default-opened>-->
-    <!--        <q-expansion-item switch-toggle-side dense-toggle label="Today"-->
-    <!--                          :header-inset-level="1"-->
-    <!--                          :content-inset-level="2">-->
-    <!--          <q-card>-->
-    <!--            <q-card-section>-->
-    <!--              1-->
-    <!--            </q-card-section>-->
-    <!--          </q-card>-->
-    <!--        </q-expansion-item>-->
-
-    <!--        <q-expansion-item switch-toggle-side dense-toggle label="Yesterday" :header-inset-level="1"-->
-    <!--                          :content-inset-level="2">-->
-    <!--          <q-card>-->
-    <!--            <q-card-section>-->
-    <!--              2-->
-    <!--            </q-card-section>-->
-    <!--          </q-card>-->
-    <!--        </q-expansion-item>-->
-    <!--      </q-expansion-item>-->
-    <!--    </q-expansion-item>-->
-
-
     <q-expansion-item
+        class="q-gutter-md"
         dense-toggle
         v-for="(item,index) in menuData"
         :hide-expand-icon="!item.children"
@@ -46,11 +12,9 @@
         :default-opened="item.parentId === 0"
         :header-inset-level="level"
         :to="item.menuType === 'C' ? item.path: '' "
+        @click="notifyBreadcrumbs(item)"
     >
-
       <menus v-if="item.children" :menu-data="item.children" :level="level+1"/>
-
-
     </q-expansion-item>
   </q-list>
 
@@ -76,6 +40,14 @@ export default {
     testclick() {
       // this.$axios.get('/api/test')
       console.log("得到的菜单列表=>", this.$props.menuData)
+    },
+    /**
+     * 发送通知
+     * 通知面包屑导航栏更新
+     */
+    notifyBreadcrumbs(item) {
+      this.$bus.emit("notifyBreadcrumbs", item)
+
     }
   },
   mounted() {

@@ -1,193 +1,183 @@
 <template>
   <q-page class="cc-admin">
-    <div>
-      <q-card class="my-card q-ma-sm">
-        <q-card-section>
-          <h5>用户管理</h5>
-        </q-card-section>
-      </q-card>
-    </div>
-    <q-scroll-area style="height: 70vh">
-      <div class="col bg-white shadow-2 q-pa-md q-ma-sm">
-        <q-table
-            flat
-            color="primary"
-            class="cross_table"
-            separator="cell"
-            :columns="columns"
-            :rows="list"
-            row-key="userId"
-            v-model:pagination="pagination"
-            :visible-columns="group"
-            @request="query"
-            :rows-per-page-options="[10,20,50,100]"
-            :loading="loading"
-            selection="multiple"
-            v-model:selected="selected"
 
-        >
-          <template v-slot:top="table">
-            <div class="row no-wrap full-width">
-              <q-input clearable outlined dense placeholder="请输入关键字搜索" class="on-left" debounce="500"
-                       @input="query"
-                       v-model="searchForm.username">
-                <template #append>
-                  <q-btn flat round icon="search" color="primary" @click="query" :loading="loading">
-                    <q-tooltip>搜索</q-tooltip>
-                  </q-btn>
-                </template>
-              </q-input>
-              <div class="row no-wrap">
-                <q-select clearable outlined dense class="on-left" debounce="500" emit-value map-options
-                          @input="query"
-                          :options="userStatus"
-                          v-model="searchForm.enabled">
-                  <template #before><h6>状态</h6></template>
-                </q-select>
-              </div>
-
-              <q-space/>
-              <div class="q-gutter-xs">
-                <q-btn icon="add" no-wrap color="primary" label="新建" @click="add"/>
-                <q-btn no-wrap v-show="$q.screen.gt.sm" label="导入" icon="file_upload"
-                       :loading="importing"
-                       color="primary"
-                       @click="importExcel"
-                >
-                  <q-tooltip>请选择Excel文件</q-tooltip>
-                  <q-uploader
-                      auto-upload
-                      ref="excelUploader"
-                      :max-files="1"
-                      class="hidden"
-                      :url="url.importExcelUrl"
-                      field-name="file"
-                      accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      @uploaded="importedExcel"
-                  />
+    <div class="col bg-white shadow-2 q-pa-md q-ma-sm">
+      <q-table
+          title="用户管理"
+          flat
+          color="primary"
+          separator="cell"
+          :columns="columns"
+          :rows="list"
+          row-key="userId"
+          v-model:pagination="pagination"
+          :visible-columns="group"
+          @request="query"
+          :rows-per-page-options="[10,20,50,100]"
+          :loading="loading"
+          selection="multiple"
+          v-model:selected="selected">
+        <template v-slot:top="table">
+          <div class="row no-wrap full-width">
+            <q-input clearable outlined dense placeholder="请输入关键字搜索" class="on-left" debounce="500"
+                     @input="query"
+                     v-model="searchForm.username">
+              <template #append>
+                <q-btn flat round icon="search" color="primary" @click="query" :loading="loading">
+                  <q-tooltip>搜索</q-tooltip>
                 </q-btn>
-                <q-btn-dropdown
-                    split
-                    no-wrap
-                    v-show="$q.screen.gt.sm"
-                    :loading="exporting"
-                    label="导出"
-                    icon="file_download"
-                    color="primary"
-                    @click="exportExcel('用户数据')">
-                  <q-list>
-                    <q-item clickable v-close-popup>
-                      <q-btn
-                          no-wrap
-                          v-show="$q.screen.gt.sm"
-                          :loading="exporting"
-                          label="下载导入模板"
-                          icon="file_download"
-                          color="primary"
-                          @click="meExportExcel('用户数据')"
-                      />
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
-
-
-                <q-btn
-                    :disable="selected.length === 0"
-                    no-wrap
-                    v-show="$q.screen.gt.md"
-                    color="negative"
-                    label="批量删除"
-                    @click="showConfirm()"
-                    icon="mdi-delete-variant"
-                />
-                <q-btn
-                    color="primary"
-                    label="切换全屏"
-                    no-wrap
-                    v-show="$q.screen.gt.md"
-                    @click="table.toggleFullscreen"
-                    :icon="table.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                />
-                <q-btn-dropdown
-                    color="primary"
-                    label="自选列"
-                    icon="view_list"
-                    no-wrap
-
-                    v-show="$q.screen.gt.md">
-                  <q-list>
-                    <q-item tag="label" v-for="item in columns" :key="item.name">
-                      <q-item-section avatar>
-                        <q-checkbox v-model="group" :val="item.name"/>
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ item.label }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
-              </div>
+              </template>
+            </q-input>
+            <div class="row no-wrap">
+              <q-select clearable outlined dense class="on-left" debounce="500" emit-value map-options
+                        @input="query"
+                        :options="userStatus"
+                        v-model="searchForm.enabled">
+                <template #before><h6>状态</h6></template>
+              </q-select>
             </div>
-          </template>
 
-
-          <template #body-cell-userId="props">
-            <q-td :props="props" v-show="false">
-              {{ props.row.userId }}
-            </q-td>
-          </template>
-
-          <template #body-cell-username="props">
-            <q-td :props="props">
-              <q-btn flat dense color="primary" :label="props.row.username"
-                     @click="showDetail(props.row)">
-                <q-tooltip>查看详情</q-tooltip>
+            <q-space/>
+            <div class="q-gutter-xs">
+              <q-btn icon="add" no-wrap color="primary" label="新建" @click="add"/>
+              <q-btn no-wrap v-show="$q.screen.gt.sm" label="导入" icon="file_upload"
+                     :loading="importing"
+                     color="primary"
+                     @click="importExcel"
+              >
+                <q-tooltip>请选择Excel文件</q-tooltip>
+                <q-uploader
+                    auto-upload
+                    ref="excelUploader"
+                    :max-files="1"
+                    class="hidden"
+                    :url="url.importExcelUrl"
+                    field-name="file"
+                    accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    @uploaded="importedExcel"
+                />
               </q-btn>
-            </q-td>
-          </template>
+              <q-btn-dropdown
+                  split
+                  no-wrap
+                  v-show="$q.screen.gt.sm"
+                  :loading="exporting"
+                  label="导出"
+                  icon="file_download"
+                  color="primary"
+                  @click="exportExcel('用户数据')">
+                <q-list>
+                  <q-item clickable v-close-popup>
+                    <q-btn
+                        no-wrap
+                        v-show="$q.screen.gt.sm"
+                        :loading="exporting"
+                        label="下载导入模板"
+                        icon="file_download"
+                        color="primary"
+                        @click="meExportExcel('用户数据')"
+                    />
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
 
 
-          <template #body-cell-avatar="props">
-            <q-td :props="props">
-              <q-avatar size="70px">
-                <img :src="props.row.avatar">
-              </q-avatar>
-            </q-td>
-          </template>
+              <q-btn
+                  :disable="selected.length === 0"
+                  no-wrap
+                  v-show="$q.screen.gt.md"
+                  color="negative"
+                  label="批量删除"
+                  @click="showConfirm()"
+                  icon="delete"
+              />
+              <q-btn
+                  color="primary"
+                  label="切换全屏"
+                  no-wrap
+                  v-show="$q.screen.gt.md"
+                  @click="table.toggleFullscreen"
+                  :icon="table.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+              />
+              <q-btn-dropdown
+                  color="primary"
+                  label="自选列"
+                  icon="view_list"
+                  no-wrap
 
-          <template #body-cell-userType="props">
-            <q-td :props="props">
-              {{ findLoginType(props.row.userType) }}
-            </q-td>
-          </template>
+                  v-show="$q.screen.gt.md">
+                <q-list>
+                  <q-item tag="label" v-for="item in columns" :key="item.name">
+                    <q-item-section avatar>
+                      <q-checkbox v-model="group" :val="item.name"/>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ item.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
+          </div>
+        </template>
 
-          <template #body-cell-gender="props">
-            <q-td :props="props">
-              {{ findUserGender(props.row.gender) }}
-            </q-td>
-          </template>
 
-          <template #body-cell-enabled="props">
-            <q-td :props="props">
-              {{ findUserStatus(props.row.enabled) }}
-            </q-td>
-          </template>
+        <template #body-cell-userId="props">
+          <q-td :props="props" v-show="false">
+            {{ props.row.userId }}
+          </q-td>
+        </template>
 
-          <template #body-cell-opt="props">
-            <q-td :props="props" :auto-width="true">
+        <template #body-cell-username="props">
+          <q-td :props="props">
+            <q-btn flat dense color="primary" :label="props.row.username"
+                   @click="showDetail(props.row)">
+              <q-tooltip>查看详情</q-tooltip>
+            </q-btn>
+          </q-td>
+        </template>
 
-              <q-btn flat round dense color="amber" icon="admin_panel_settings" @click="editRole(props.row)">
-                <q-tooltip>更改角色</q-tooltip>
-              </q-btn>
-              <q-btn flat round dense color="primary" icon="edit" @click="editBefored(props.row)">
-                <q-tooltip>编辑</q-tooltip>
-              </q-btn>
-              <btn-del :label="props.row.username" @confirm="deleted(props.row)"/>
-            </q-td>
-          </template>
-        </q-table>
-      </div>
-    </q-scroll-area>
+
+        <template #body-cell-avatar="props">
+          <q-td :props="props">
+            <q-avatar size="70px">
+              <img :src="props.row.avatar">
+            </q-avatar>
+          </q-td>
+        </template>
+
+        <template #body-cell-userType="props">
+          <q-td :props="props">
+            {{ findLoginType(props.row.userType) }}
+          </q-td>
+        </template>
+
+        <template #body-cell-gender="props">
+          <q-td :props="props">
+            {{ findUserGender(props.row.gender) }}
+          </q-td>
+        </template>
+
+        <template #body-cell-enabled="props">
+          <q-td :props="props">
+            {{ findUserStatus(props.row.enabled) }}
+          </q-td>
+        </template>
+
+        <template #body-cell-opt="props">
+          <q-td :props="props" :auto-width="true">
+
+            <q-btn flat round dense color="amber" icon="admin_panel_settings" @click="editRole(props.row)">
+              <q-tooltip>更改角色</q-tooltip>
+            </q-btn>
+            <q-btn flat round dense color="primary" icon="edit" @click="editBefored(props.row)">
+              <q-tooltip>编辑</q-tooltip>
+            </q-btn>
+            <btn-del :label="props.row.username" @confirm="deleted(props.row)"/>
+          </q-td>
+        </template>
+      </q-table>
+    </div>
 
     <q-dialog maximized flat persistent ref="dialog">
 

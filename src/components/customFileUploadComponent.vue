@@ -150,7 +150,7 @@ export default {
     urls: {required: true,},
     multiple: {type: Boolean, default: true},
     maxTotalSize: {type: String, default: '100000000'},
-    maxFiles: {type: Number, default: 50},
+    maxFiles: {type: Number, default: 1},
     accept: {type: String, default: 'image/*'},
     uploadUrl: {type: String, default: uploadUrl},
   },
@@ -177,7 +177,6 @@ export default {
     },
   },
   created() {
-    console.log("this.urls", this.urls)
     if (!this.multiple) {
       if (this.urls) {
         this.handleAsync();
@@ -248,6 +247,8 @@ export default {
       }).finally(() => {
         this.visible = false
         this.status = 1
+
+
 
       })
     },

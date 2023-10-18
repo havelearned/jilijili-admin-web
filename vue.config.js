@@ -27,8 +27,15 @@ module.exports = defineConfig({
     },
     devServer: {
         //代理axios
-        proxy: 'http://localhost:8080',
-        //vue自己启动的端口
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+                pathRewrite: {
+                    '/api': ''
+                }
+            }
+        },
         port: 9111
     }
 

@@ -1,15 +1,14 @@
-
-<template>
-<div>监控管理</div>
-</template>
 <script>
 import {defineComponent} from 'vue'
 
 export default defineComponent({
-  name: "index"
+  name: "toolItem"
 })
 </script>
 
+<template>
+
+</template>
 
 <style scoped>
 

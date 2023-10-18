@@ -21,7 +21,7 @@ export default {
     msg: String,
     icon: {
       type: String,
-      default: 'mdi-delete-variant',
+      default: 'delete',
     },
   },
   data() {

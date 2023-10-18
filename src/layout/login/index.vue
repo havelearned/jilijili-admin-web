@@ -1,141 +1,92 @@
 <template>
-  <q-layout class="cc-admin">
-    <q-page-container>
-      <q-page class="login-register-page">
-        <div class="login-register-card" style="width: 500px;height: 400px;margin: 100px auto 0;">
-          <q-card>
+  <div class="box">
+    <div class="forms">
+      <div class="tips">
+        <span class="login-btn" ref="loginBtn">login</span>
+      </div>
+      <div class="login" @click="loginBtnClick" ref="login">
+        <q-form @submit="login">
 
-            <div class="text-h6 text-center  q-pa-md">
-              <q-avatar><img src="@/assets/logo.svg" alt=""></q-avatar>Jill-Admin Login
+          <div class="form-title">
+            <h3>
+              <q-avatar>
+                <q-img fit="cover"
+                       src="@/assets/logo.svg"></q-img>
+              </q-avatar>
+              Jill-Admin Login v0.0.1 青春版
+            </h3>
+          </div>
+          <div class="form q-gutter-md">
+            <div class="username ">
+              <q-input outlined dense debounce="500" lazy-rules placeholder="用户名：" hide-bottom-space bg-color="white"
+                       square
+                       v-model.trim="loginData.username" class="ipts">
+              </q-input>
+              <!--            <input type="text" class="ipts">-->
             </div>
-            <q-card-section>
-              <q-tabs v-model="activeTab" dense align="justify">
-                <q-tab name="login">登录</q-tab>
-                <q-tab name="register" disable>注册</q-tab>
-              </q-tabs>
-            </q-card-section>
-            <q-card-section>
-              <q-tab-panels v-model="activeTab">
-                <q-tab-panel name="login">
-                  <q-form @submit="login" class="q-gutter-md">
-                    <div class="row q-col-gutter-x-md dialog_form q-pa-md">
-                      <div class="col-12">
-                        <q-input
-                            outlined dense debounce="500" lazy-rules placeholder="用户名：" hide-bottom-space
-                            bg-color="white" square
-                            v-model.trim="loginData.username"
-                        >
-                          <template v-slot:before>
-                            <div class="text-h6">
-                              账号:
-                            </div>
-                          </template>
-                        </q-input>
-                      </div>
-                      <div class="text-h6 col-12">
-                        <q-input
-                            outlined :type="isPwd ? 'password' : 'text'" dense bg-color="white" placeholder="密码：" debounce="500" hide-bottom-spacelazy-rules square
-                            v-model.trim="loginData.password">
-                          <template v-slot:before>
-                            <div class="text-h6">
-                              密码:
-                            </div>
-                          </template>
-                          <template v-slot:append>
-                            <q-icon
-                                :name="isPwd ? 'visibility_off' : 'visibility'"
-                                class="cursor-pointer"
-                                @click="isPwd = !isPwd"
-                            />
-                          </template>
-                        </q-input>
-                      </div>
-<!--                      <div class="row q-pa-md ">
-                        <div class="cc-login-form-item col-12">
-                          <q-input
-                              outlined
-                              v-model.trim="loginData.captcha"
-                              dense
-                              debounce="500"
-                              placeholder="验证码："
-                              bg-color="white"
-                              lazy-rules
-                              hide-bottom-space
-                              square>
-                            <template v-slot:after>
-                              <img :src="verificationImg" @click="captcha">
-                            </template>
-                          </q-input>
-                        </div>
-                      </div>-->
-                      <div class="col-12">
-                        <q-btn
-                            dense
-                            unelevated
-                            label="登 录"
-                            size="17px"
-                            color="black"
-                            class=" full-width no-border-radius q-pa-none"
-                            type="submit"
-                            :loading="loading">
-                          <template v-slot:loading>
-                            <q-spinner-ios class="on-left"/>
-                            登录...
-                          </template>
-                        </q-btn>
-                      </div>
-                    </div>
-                  </q-form>
-                </q-tab-panel>
-                <q-tab-panel name="register">
-                  <div class="text-h6">Register</div>
-                  <q-form @submit="register">
-                    <q-input
-                        outlined
-                        v-model="registerData.username"
-                        label="Username"
-                        dense
-                    ></q-input>
-                    <q-input
-                        outlined
-                        v-model="registerData.password"
-                        label="Password"
-                        type="password"
-                        dense
-                    ></q-input>
-                    <q-input
-                        outlined
-                        v-model="registerData.email"
-                        label="Email"
-                        dense
-                    ></q-input>
-                    <q-btn
-                        type="submit"
-                        label="Register"
-                        color="primary"
-                        class="q-mt-md"
-                        dense
-                    ></q-btn>
-                  </q-form>
-                </q-tab-panel>
-              </q-tab-panels>
-            </q-card-section>
-          </q-card>
-        </div>
+            <div class="password ">
+              <q-input
+                  outlined :type="isPwd ? 'password' : 'text'" dense bg-color="white" placeholder="密码：" debounce="500"
+                  hide-bottom-spacelazy-rules square
+                  v-model.trim="loginData.password">
+                <template v-slot:append>
+                  <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                  />
+                </template>
+              </q-input>
+            </div>
+
+            <q-input v-show="false" outlined dense debounce="500" placeholder="验证码：" bg-color="white" lazy-rules
+                     hide-bottom-space
+                     square
+                     v-model.trim="loginData.captcha">
+              <template v-slot:after>
+                <img :src="verificationImg" @click="captcha">
+              </template>
+            </q-input>
+            <div class="other-select">
+              <div class="rem-pwd">
+                <input type="checkbox" id="check">
+                <label for="check" class="rem-pwd-tips">remember password</label>
+              </div>
+              <span class="fogot-pwd-btn" ref="fogotPwd" @click="fogotPwdBtnClick">忘记密码</span>
+            </div>
+            <q-btn dense unelevated label="登 录" size="17px" color="black"
+                   class=" full-width no-border-radius q-pa-none btn"
+                   type="submit" :loading="loading">
+              <template v-slot:loading>
+                <q-spinner-ios class="on-left"/>
+                登录...
+              </template>
+            </q-btn>
+            <div class="other-login">
+              <span>Other login methods</span>
+              <div class="login-img">
+                <img src="@/assets/css/login/QQ.png" alt="">
+                <img src="@/assets/css/login/wechat-fill.png" alt="">
+              </div>
+            </div>
+          </div>
 
 
-      </q-page>
-    </q-page-container>
-  </q-layout>
+          <q-inner-loading :showing="loading">
+            <q-spinner-gears size="50px" color="primary"/>
+          </q-inner-loading>
+        </q-form>
+      </div>
+    </div>
 
+  </div>
 
 </template>
 
 <script>
-
-import {axiosInstance} from "@/boot/api/request";
 import Cookie from "@/boot/cookie";
 import {useNotify} from "@/boot/useNotify";
+import '@/assets/css/login/index'
 
 export default {
   components: {},
@@ -164,7 +115,6 @@ export default {
     };
   },
   mounted() {
-
     this.captcha();
   },
   methods: {
@@ -174,19 +124,19 @@ export default {
       // this.$router.push('/home');
       //
       // return
-
-
+      this.loading = true;
       this.$store.dispatch('user/loginActions', this.loginData).then(res => {
         if (res.flag) {
           this.$axios.get('/sysUser/me', {params: {token: res.data}}).then(res => {
             console.log("me=>", res)
-            Cookie.setCookies(Cookie.USERINFO, res.data)
+            Cookie.setCookies(Cookie.USERINFO, res.data, true, 7)
 
             this.$axios.get("/sysUser/menulist", {params: {userId: res.data.userId}}).then(res_3 => {
               if (res_3.flag) {
                 Cookie.setLocalKeyValue(Cookie.MENULIST, res_3.data)
                 useNotify().infoNotify(res.message)
-                this.$router.push('/home');
+                // this.$router.push('/home');
+                this.$router.push('/loading');
               }
 
             }).catch(error => {
@@ -198,6 +148,8 @@ export default {
         }
       }).catch(err => {
         console.log('login-err', err)
+      }).finally(() => {
+        this.loading = false;
       })
 
 
@@ -229,13 +181,31 @@ export default {
         console.log(err)
       })
     },
-
-
+    loginBtnClick() {
+      this.$refs.login.style.opacity = '1'
+      this.$refs.login.style.animation = 'into 1s ease'
+      this.$refs.login.style.zIndex = '10'
+      this.$refs.fogotPwd.style.opacity = '0'
+      this.$refs.fogotPwd.style.zIndex = '-1'
+      this.$refs.fogotPwd.style.animation = 'none'
+      this.$refs.loginBtn.style.borderBottom = '4px solid rgb(249, 177, 122)'
+      this.$refs.loginBtn.style.color = '#fff'
+    },
+    fogotPwdBtnClick() {
+      this.$refs.login.style.opacity = '0'
+      this.$refs.login.style.zIndex = '-1'
+      this.$refs.login.style.animation = 'none'
+      this.$refs.fogotPwd.style.opacity = '1'
+      this.$refs.fogotPwd.style.zIndex = '10'
+      this.$refs.fogotPwd.style.animation = 'into 1s ease'
+    },
   },
+
 };
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+@import "@/assets/css/login/style";
+@import "@/assets/css/login/style.css";
 
 </style>

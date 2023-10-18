@@ -3,7 +3,7 @@
     <div>
       <q-card class="my-card q-ma-sm">
         <q-card-section>
-          <h5>用户管理</h5>
+          <h5>app管理</h5>
         </q-card-section>
       </q-card>
     </div>

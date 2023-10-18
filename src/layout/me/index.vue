@@ -98,15 +98,16 @@ export default defineComponent({
   },
   created() {
     this.form = cookie.getCookies(cookie.USERINFO)
-    // console.log("当前角色=>", this.form)
+
 
   },
   methods: {
     ellipsis,
     logoutClick() {
-      cookie.removeCookies(cookie.USERINFO)
-      cookie.removeLocalKey(cookie.MENULIST)
-      cookie.removeCookies(cookie.TOKENNAME)
+      this.$store.commit('user/loginExit')
+      // cookie.removeCookies(cookie.USERINFO)
+      // cookie.removeLocalKey(cookie.MENULIST)
+      // cookie.removeCookies(cookie.TOKENNAME)
       window.location.reload()
     }
 

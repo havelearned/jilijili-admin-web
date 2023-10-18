@@ -119,7 +119,8 @@ export const themeMap = {
     ],
 };
 
-export const chartTypes = [{
+export const chartTypes =
+    [{
     name: 'table',
     icon: 'mdi-table',
     label: '表格',
@@ -343,9 +344,21 @@ export const chartList = [
  * @param maxWidth 最大宽度
  * @returns {number}
  */
-export const calculateWidth = (textLength,maxWidth) => {
+export const calculateWidth = (textLength, maxWidth) => {
     const mappingRatio = 0.5; // Adjust this value as needed
     return Math.min(textLength * mappingRatio, maxWidth);
+}
+
+/**
+ * 截取url"?"前面的所有字符
+ * 例如: http://www.baidu.com/search?keywork=xxxx
+ * 返回: http://www.baidu.com/search
+ * @param url
+ */
+export const splitUrl = (url) => {
+    if (url === undefined || url === '') return undefined;
+    url = url.split("?")[0];
+    return url;
 }
 
 /**
@@ -365,6 +378,13 @@ export const getFileName = (url) => {
     return filename;
 }
 
+
+/**
+ * 字符串切割
+ * @param value
+ * @param vlength
+ * @returns {*|string}
+ */
 export const ellipsis = (value, vlength = 25) => {
     if (!value) {
         return '';
@@ -970,7 +990,17 @@ export const chartConfig = (v, darkModel) => {
 };
 
 
+/**
+ * 时间格式化
+ * @param stringDate
+ * @param dateFormat
+ * @returns {*}
+ */
 export function formatDate(stringDate, dateFormat) {
+    if(!stringDate){
+        return ""
+
+    }
     var date = new Date(stringDate);
 
     var year = date.getFullYear();
@@ -982,4 +1012,24 @@ export function formatDate(stringDate, dateFormat) {
         .replace('yyyy', year)
         .replace('MM', month)
         .replace('dd', day);
+}
+
+/**
+ * 通过value查找label以适配选择框数据
+ * @param {Array} data 数据数组对象，每个对象包含 {label: string, value: any} 结构
+ * @param {any} value 要查找的值
+ * @returns {string|null} 如果找到匹配的label，则返回label，否则返回null
+ */
+export function searchLabel(data, value) {
+    try {
+        // 使用 Array.find() 查找匹配的对象
+        const match = data.find(item => item.value === value);
+
+        // 如果找到匹配的对象，返回其对应的label；否则返回null
+        return match ? match.label : null;
+    } catch (error) {
+        // 可以添加错误处理代码，例如记录错误日志或抛出异常
+        console.error("An error occurred while searching for the label:", error);
+        return null;
+    }
 }

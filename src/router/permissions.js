@@ -1,6 +1,6 @@
 import User from "@/views/system/user/index.vue";
 import Role from "@/views/system/role/index.vue";
-import Monitor from "@/views/monitor/index.vue";
+import Monitor from "@/views/system/monitor/index.vue";
 import Menu from "@/views/system/menu/index.vue";
 import Tool from "@/views/system/tool/index.vue";
 import Cookie from "@/boot/cookie";

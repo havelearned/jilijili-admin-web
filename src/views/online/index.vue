@@ -1,23 +1,26 @@
 <template>
-  <div class="">
-    <q-layout view="lHh Lpr Rff" container style="height: 73vh" class="shadow-2 rounded-borders">
+  <div style="height: 100vmin;width: 100%;,margin: 0 auto">
+    <q-layout view="LHh Lpr fFf" container class="shadow-2 rounded-borders full-width full-height">
       <q-header elevated class="bg-black">
         <q-toolbar>
           <div class="row" v-for="(tab,index) in tabOptions">
             <q-btn class="q-ma-xs" split color="primary" push glossy no-caps
                    :label="tab.username"
                    @click="toTab(tab)">
+              <q-avatar>
+                <q-img :src="splitUrl(tab.avatar)"></q-img>
+              </q-avatar>
               <q-icon name="clear" size="xs" color="red" @click="removeTab(tab)"></q-icon>
               <q-badge align="bottom" color="red" floating>22</q-badge>
             </q-btn>
-
           </div>
           <q-toolbar-title>正在和 {{ chatUser.username }} 沟通</q-toolbar-title>
-          <q-btn flat @click="drawer = !drawer" round dense icon="menu"/>
+          <q-btn flat @click="drawer = !drawer" round dense icon="exit_to_app"/>
         </q-toolbar>
       </q-header>
+
       <q-drawer
-          side="right"
+          side="left"
           v-model="drawer"
           show-if-above
           :width="200"
@@ -44,11 +47,11 @@
               </q-input>
             </q-item>
 
-            <q-item v-for="(user,index) in list" clickable v-ripple
-                    @click="sendChat(user)">
+            <q-item v-for="(user,index) in list" :key="user.userId" clickable v-ripple
+                    @dblclick="sendChat(user)">
               <q-item-section avatar>
                 <q-avatar>
-                  <q-img :src="user.avatar"/>
+                  <q-img :src="splitUrl(user.avatar)"/>
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -77,7 +80,7 @@
         <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
           <div class="absolute-bottom bg-transparent">
             <q-avatar class="q-mb-sm">
-              <img :src="chatUser.avatar">
+              <img :src="splitUrl(chatUser.avatar)">
             </q-avatar>
             <div class="text-weight-bold">正在与{{ chatUser.username }}沟通</div>
             <div>{{ chatUser.email }}</div>
@@ -86,29 +89,42 @@
       </q-drawer>
 
       <q-page-container>
+
         <q-tab-panels v-model="currPanel" animated class="shadow-2 rounded-borders">
           <q-tab-panel v-for="(tab,index) in tabOptions" :name="tab.userId" v-show="tab.userId === currPanel">
             <div class="q-pa-md row justify-center">
-              <div style="width: 100%;" v-for="message in  dynamicMessages">
-                <q-chat-message :name="message.name"
-                                :avatar="message.avatar"
-                                :text="message.text"
-                                :stamp="message.stamp"
-                                :size="message.size"
-                                :sent="message.sent"
-                                :text-color="message.textColor"
-                                :bg-color="message.bgColor"/>
-
+              <div style="width: 100%;" v-for="item in  currentChatUserRecord">
+                <q-chat-message
+                    :name="item.username"
+                    :avatar="splitUrl(item.avatar)"
+                    :text="item.message"
+                    :stamp="formatDate(item.createdTime,'yyyy-MM-dd')"
+                    :size="calculateWidth(item.size).toString()"
+                    :sent="item.sent"
+                    :text-color="item.textColor"
+                    :bg-color="item.bgColor">
+                  <template v-slot:avatar>
+                    <q-avatar>
+                      <q-img :src="splitUrl(item.avatar)">
+                        <template v-slot:error>{{ item.avatar }}</template>
+                      </q-img>
+                    </q-avatar>
+                  </template>
+                  <template v-slot:name class="bg-red">
+                    {{ item.username }}
+                  </template>
+                </q-chat-message>
               </div>
-
-              <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-                <q-btn fab icon="keyboard_arrow_up" color="accent"/>
-              </q-page-scroller>
             </div>
           </q-tab-panel>
         </q-tab-panels>
 
-
+        <q-page-scroller reverse position="top-right" :scroll-offset="20" :offset="[0, 18]">
+          <q-btn fab icon="keyboard_arrow_down" color="accent" ref="btn_click_down"/>
+        </q-page-scroller>
+        <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
+          <q-btn fab icon="keyboard_arrow_up" color="accent"/>
+        </q-page-scroller>
       </q-page-container>
     </q-layout>
 
@@ -117,6 +133,7 @@
         <q-input filled style="width: 400px" color="black" bottom-slots label="请输入内容"
                  clearable dense
                  v-model="inputText"
+                 @keyup.enter="sendMessage"
         >
           <template v-slot:after>
             <q-icon v-ripple name="send" @click="sendMessage(currPanel)">
@@ -127,131 +144,36 @@
       </div>
 
     </div>
+
+    <!--    通话弹窗-->
+    <call ref="call_dialog"/>
+
   </div>
 </template>
 
 <script>
-import {ref} from 'vue'
 import {IndexMixin} from "@/boot/mixins";
-import Wsclient from "@/boot/wsclient";
+import Wsclient from "@/boot/ws";
 import Cookie from "@/boot/cookie";
-import {calculateWidth} from "@/boot/datatype";
+import {calculateWidth, formatDate, getFileName, splitUrl} from "@/boot/datatype";
+import Call from "@/views/online/call.vue";
 
 export default {
   name: "",
   mixins: [IndexMixin],
   components: {},
   data() {
-    return {
-      currentUser: Cookie.getCookies(Cookie.USERINFO),
-      drawer: false,
-      tabOptions: [],
-      currPanel: '',
-      chatUser: {},
-      inputText: '',
-      dynamicMessages: [
-        {
-          id: Date.now(), // You can use a unique ID for each message
-          name: 'John', // Change the sender's name
-          avatar: 'https://cdn.quasar.dev/img/avatar3.jpg', // Change the sender's avatar URL
-          text: ['This is a dynamic message.'], // Message content as an array of strings
-          stamp: 'Just now', // Change the timestamp
-          size: 6, // Change the size of the message
-          textColor: 'black', // Change the text color
-          bgColor: 'grey', // Change the background
-          sent: true,
-        }
-      ],
-      columns: [
-        {name: 'index', align: 'center', label: '序号', field: 'index',},
-        {name: 'roleId', align: 'center', label: '角色id', field: 'roleId',},
-        {name: 'roleName', align: 'center', label: '角色标识', field: 'roleName',},
-        {name: 'title', align: 'center', label: '角色名称', field: 'title',},
-        {name: 'createdTime', align: 'center', label: '创建时间', field: 'createdTime',},
-        {name: 'opt', align: 'center', label: '操作', field: 'opt',},],
-      showQuery: true,
-      url: {
-        list: '/sysUser/list',
-        add: '/sysUser',
-        edit: '/sysUser',
-        uploadUrl: '/file/upload',
-        delete: '/sysUser',
-        deleteBatch: '/sysUser/',
-        exportXlsUrl: '/sysUser/export',
-        importExcelUrl: '/sysUser/import',
-        getImportTemplate: '/sysUser/get/exportTemplate',
-      },
-      ws: {
-        connUrl: 'http://localhost:8080/multimedia',
-        subscribe: '/user/queue/message',
-      }
-    }
+
+    return {}
   },
   created() {
-    Wsclient.createSocket(this.ws.connUrl, this.ws.subscribe)
+
   },
   beforeDestroy() {
-    Wsclient.disconnect()
+
   },
-  methods: {
-    // 发起聊天
-    sendChat(user) {
-      this.currPanel = user.userId;
-      this.chatUser = user;
-      const existingTab = this.tabOptions
-          .filter(item => item.userId === user.userId);
-      if (existingTab.length > 0) {
-        return;
-      }
-      this.tabOptions.push(user)
-
-    },
-    // 发起通话
-    sendCall(user) {
-    },
-    // 视频通话
-    sendVideo(user) {
-      alert(user)
-    },
-
-    removeTab(tab) {
-      this.tabOptions = this.tabOptions.filter(item => item.userId !== tab.userId)
-
-    },
-    toTab(tab) {
-      this.currPanel = tab.userId
-      this.chatUser = tab
-
-    },
-    sendMessage(userId) {
-      if (this.inputText.length < 0) return;
-      if (!this.chatUser.userId) return;
-
-      let message = {
-        senderId: this.currentUser.userId,
-        receiverId: this.chatUser.userId,
-        message: this.inputText,
-        type: 0,
-        isRead: 0,
-        isDeleted: 0,}
-      Wsclient.send('/app/chat', message)
-
-      this.dynamicMessages.push(
-          {
-            id: this.currentUser.userId, // You can use a unique ID for each message
-            name: this.currentUser.username, // Change the sender's name
-            avatar: this.currentUser.avatar, // Change the sender's avatar URL
-            text: ['1'], // Message content as an array of strings
-            stamp: 'Just now', // Change the timestamp
-            size: calculateWidth(this.inputText,6).toString(), // Change the size of the message
-            textColor: 'black', // Change the text color
-            bgColor: 'grey', // Change the background
-            sent: true,
-          },
-      )
-    },
-
-  }
+  computed: {},
+  methods: {}
 }
 </script>
 <style lang="sass" scoped>

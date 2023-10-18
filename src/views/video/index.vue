@@ -1,14 +1,11 @@
 
-
 <template>
   <div>
-    <center>
-      asdf
-    </center>
-
+    视频g哪里
   </div>
 
 </template>
+
 <script>
 import {defineComponent} from 'vue'
 
@@ -16,6 +13,7 @@ export default defineComponent({
   name: "index"
 })
 </script>
+
 
 
 <style scoped>
