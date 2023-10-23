@@ -281,8 +281,8 @@ import Confirm from "@/components/confirm.vue";
 import BtnDel from "@/components/btndel.vue";
 import vMdEditor from '@kangc/v-md-editor'
 import selected from "@/components/selected.vue";
-import {addOrUpdateNotify, getDictItem, getDictItemList, notifyPublishById} from "@/boot/api/sys/tool";
-import UserDialog from "@/components/userDialog.vue"
+import {addOrUpdateNotify, getDictItem, notifyPublishById} from "@/boot/api/sys/tool";
+import UserDialog from "@/components/dialog/userDialog.vue"
 import {useNotify} from "@/boot/useNotify";
 
 export default {
@@ -351,14 +351,14 @@ export default {
      * 重新发布
      * @param row
      */
-    republish(row){
-      notifyPublishById(row.notifyId).then(res=>{
-        if(res.flag){
+    republish(row) {
+      notifyPublishById(row.notifyId).then(res => {
+        if (res.flag) {
           useNotify().infoNotify(res.message)
-        }else{
+        } else {
           useNotify().negativeNotify(res.message)
         }
-      }).finally(()=>{
+      }).finally(() => {
         this.query()
       })
 

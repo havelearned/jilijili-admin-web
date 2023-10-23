@@ -168,11 +168,10 @@
 
         <template #body-cell-nickname="props">
           <q-td :props="props" :auto-width="true" @dblclick="my_Copy(props.row.userId)">
-            <q-img fit="cover" :src="props.row.avatar">
-              <template v-slot:error>
-                {{ props.row.nickname }}
-              </template>
-            </q-img>
+            <q-avatar>
+              <q-img fit="cover" :src="props.row.avatar"></q-img>
+            </q-avatar>
+            {{ props.row.nickname }}
             <q-tooltip>双击复制用户id</q-tooltip>
           </q-td>
         </template>
@@ -242,16 +241,17 @@
                 <tbody>
                 <tr>
                   <td class="text-center">{{ form.orderId }}</td>
-                  <td class="text-center">
+
+                  <td class="text-center" v-if="form.user">
                     <q-avatar>
                       <q-img :src="form.user.avatar">
                         <template v-slot:error>
-
                         </template>
                       </q-img>
                     </q-avatar>
-                    {{ form.user.nickname }}
+                    <div>{{ form.user.nickname }}</div>
                   </td>
+                  <td v-else><q-chip color="red">加载失败</q-chip></td>
                   <td class="text-center">{{ form.createdTime }}</td>
                   <td class="text-center"> {{ form.totalAmount }} 💴</td>
                   <td class="text-center">{{ form.orderStatus }}</td>
@@ -260,12 +260,10 @@
               </q-markup-table>
 
               <q-markup-table class="q-ma-md" separator="cell" wrap-cells dense bordered>
-                <thead class="bg-black">
+                <thead class="">
                 <tr>
                   <th colspan="6">
                     <div class="row no-wrap items-center">
-                      <q-img style="width: 70px" :ratio="1" class="rounded-borders"
-                             src="https://cdn.quasar.dev/img/donuts.png"/>
                       <div class="text-h4 q-ml-md text-black">商品详情</div>
                     </div>
                   </th>
@@ -284,11 +282,10 @@
                 <tr v-for="(orderItem,index) in form.ordersItem" :key="orderItem.itemId">
                   <td class="text-center" v-if="orderItem.products">{{ orderItem.products.productName }}</td>
                   <td class="text-center" v-if="orderItem.products">
-                    <q-img :src="orderItem.products.imageUrl" fit="cover">
-                      <template v-slot:error>
-                        图片加载中....
-                      </template>
-                    </q-img>
+                    <q-avatar>
+                      <q-img :src="orderItem.products.imageUrl" fit="cover">
+                      </q-img>
+                    </q-avatar>
                   </td>
                   <td class="text-center" v-if="orderItem.products">{{ orderItem.products.price }}</td>
                   <td class="text-center" v-if="orderItem.categories">{{ orderItem.categories.categoryName }}</td>
@@ -390,7 +387,7 @@ export default {
       ],
       columns: [
         {name: 'index', align: 'center', label: '序号', field: 'index',},
-        {name: 'orderId', align: 'center', label: '订单id', field: 'orderId',},
+        {name: 'orderId', align: 'center', label: '订单编号', field: 'orderId',},
         {name: 'userId', align: 'center', label: '用户id', field: 'userId',},
         {name: 'nickname', align: 'center', label: '用户名称', field: 'nickname',},
         {name: 'avatar', align: 'center', label: '用户头像', field: 'avatar',},
@@ -506,6 +503,7 @@ export default {
     top: 0
 
   /* this is when the loading indicator appears */
+
 
 
 

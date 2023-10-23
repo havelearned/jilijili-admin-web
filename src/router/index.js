@@ -22,6 +22,12 @@ const routes = [
         ]
     },
     {
+        path: '/goods',
+        name: 'publish',
+        meta:{},
+        component: () => import('@/views/shop/goodslist/goods/publish/network.vue')
+    },
+    {
         path: '/login',
         name: 'login',
         meta:{menuId: 2},

@@ -83,10 +83,10 @@ export const IndexMixin = {
         reset() {
             this.form = {...this.emptyForm};
         },
-        del({id}) {
+        del(id) {
             this.loading = true;
             return this.$axiosPlus.delete(`${this.url.delete}`, {
-                data: {idList: id}
+                data: [id]
             }).then((r) => {
                 info(r.message);
                 this.delAfter();
@@ -205,18 +205,13 @@ export const IndexMixin = {
             }
             this.exporting = true;
 
-            let url = `${this.url.exportXlsUrl}/${this.selected.toString()}`
-            let modifiedUrl = url.replace(/\/$/, '');
-
-            this.$downFilePlus(modifiedUrl, {
-                // ...this.queryParam(),
-                // ...this.searchForm,
-                // keyword: this.key,
-                // catalog: this.catalog,
-
-
-                // pageNo: 1,
-                // pageSize: 1000,
+            this.$downFilePlus(this.url.exportXlsUrl, {
+                ...this.queryParam(),
+                ...this.searchForm,
+                keyword: this.key,
+                catalog: this.catalog,
+                pageNo: 1,
+                pageSize: 10,
             }).then((data) => {
                 if (!data) {
                     this.$message.warning('文件下载失败');

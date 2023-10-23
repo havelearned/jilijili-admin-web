@@ -10,6 +10,7 @@ import {getDictList} from "@/boot/api/sys/tool";
 import {stompClient} from "@/boot/ws"
 import {defineComponent} from "vue";
 import {useNotify} from "@/boot/useNotify";
+import Cookie from "@/boot/cookie";
 
 const myIcons = {
   'SYS_ADMIN': 'face_retouching_natural',
@@ -52,7 +53,8 @@ export default defineComponent({
 
     },
     openWebSocket() {
-
+      const  user = Cookie.getCookies(Cookie.USERINFO)
+      console.log(user)
       stompClient.connect({}, (frame) => {
         useNotify().infoNotify('Connected to STOMP');
         stompClient.subscribe('/queue/notify', (message) => {
@@ -60,7 +62,7 @@ export default defineComponent({
           this.$bus.emit("AllMessage", message.body)
 
         });
-        stompClient.subscribe('/user/1/queue/notify', (message) => {
+        stompClient.subscribe(`/user/${user.userId}/queue/notify`, (message) => {
           // console.log('Received message:', message.body);
           this.$bus.emit("myMessage", message.body)
 
@@ -105,6 +107,7 @@ export default defineComponent({
   font-weight: normal;
   font-style: normal;
 }
+
 @import '@/css/quasar.variables.styl'
 @import '@/css/app.styl'
 

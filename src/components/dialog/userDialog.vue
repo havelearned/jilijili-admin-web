@@ -56,7 +56,7 @@ import vMdEditor from '@kangc/v-md-editor'
 import selected from "@/components/selected.vue";
 
 export default {
-  name: "userDialog.vue",
+  name: "userDialog",
   mixins: [IndexMixin],
   components: {
     selected,
